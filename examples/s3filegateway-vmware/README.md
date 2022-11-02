@@ -43,7 +43,7 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_domain_controllers"></a> [domain\_controllers](#input\_domain\_controllers) | The IP address of the domain controllers | `string` | n/a | yes |
+| <a name="input_domain_controllers"></a> [domain\_controllers](#input\_domain\_controllers) | Comma separated list of domain controllers. | `list(any)` | `[]` | no |
 | <a name="input_domain_password"></a> [domain\_password](#input\_domain\_password) | The password for the service account on your self-managed AD domain that SGW will use to join to your AD domain | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | The name of the region you wish to deploy into | `string` | `"us-east-1"` | no |
 | <a name="input_vsphere_password"></a> [vsphere\_password](#input\_vsphere\_password) | The password for the vcenter server | `string` | n/a | yes |

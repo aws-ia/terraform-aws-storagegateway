@@ -52,7 +52,6 @@ module "s3_bucket" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 
-
   server_side_encryption_configuration = {
     rule = {
       apply_server_side_encryption_by_default = {
@@ -87,7 +86,6 @@ module "smb_share" {
 # Create S3 bucket for Server Access Logs (Optional if already exists)
 #######################################################################
 
-
 #TFSEC Bucket logging for services access logs supressed. 
 #tfsec:ignore:aws-s3-enable-bucket-logging
 module "log_delivery_bucket" {
@@ -99,7 +97,6 @@ module "log_delivery_bucket" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
-
 
   server_side_encryption_configuration = {
     rule = {
@@ -121,8 +118,6 @@ resource "aws_kms_key" "sgw" {
   enable_key_rotation     = true
 }
 
-
-
 #####################################################################
 # Create log group for SMB File share (Optional if already created)
 #####################################################################
@@ -137,7 +132,6 @@ resource "aws_cloudwatch_log_group" "smbshare" {
     Application = "serviceA"
   }
 }
-
 
 #############################################################################
 # Create IAM role and policy for SGW to use S3 (Optional if already created)
