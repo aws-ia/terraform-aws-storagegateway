@@ -10,7 +10,7 @@ variable "domain_password" {
 
 variable "domain_controllers" {
   type        = string
-  description = "The password for the vcenter server"
+  description = "The IP address of the domain controllers"
 }
 
 variable "vsphere_password" {
