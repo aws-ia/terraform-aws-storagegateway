@@ -9,8 +9,9 @@ variable "domain_password" {
 }
 
 variable "domain_controllers" {
-  type        = string
-  description = "The IP address of the domain controllers"
+  default     = []
+  type        = list(any)
+  description = "Comma separated list of domain controllers."
 }
 
 variable "vsphere_password" {

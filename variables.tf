@@ -39,7 +39,7 @@ variable "gateway_ip_address" {
 variable "disk_path" {
   default     = "/dev/sdb"
   type        = string
-  description = "Path on the FSx appliance in vsphere where the cache disk resides on the OS"
+  description = "Path on the SGW appliance in vsphere where the cache disk resides on the OS"
 }
 
 variable "domain_controllers" {
