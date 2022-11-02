@@ -8,6 +8,11 @@ variable "domain_password" {
   description = "The password for the service account on your self-managed AD domain that SGW will use to join to your AD domain"
 }
 
+variable "domain_controllers" {
+  type        = string
+  description = "The password for the vcenter server"
+}
+
 variable "vsphere_password" {
   type        = string
   description = "The password for the vcenter server"

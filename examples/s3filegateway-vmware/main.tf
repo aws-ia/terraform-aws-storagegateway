@@ -22,7 +22,7 @@ module "sgw" {
   domain_name        = "labster.local"
   domain_username    = "svc_sgw_terraform"
   domain_password    = var.domain_password
-  domain_controllers = ["172.31.15.26"]
+  domain_controllers = var.domain_controllers
   gateway_type       = "FILE_S3"
 }
 

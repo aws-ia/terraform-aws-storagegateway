@@ -67,7 +67,7 @@ No modules.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_vsphere"></a> [vsphere](#provider\_vsphere) | >=1.25.0 |
+| <a name="provider_vsphere"></a> [vsphere](#provider\_vsphere) | 2.2.0 |
 
 ## Modules
 
@@ -107,5 +107,5 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_vm_ip"></a> [vm\_ip](#output\_vm\_ip) | n/a |
+| <a name="output_vm_ip"></a> [vm\_ip](#output\_vm\_ip) | IP address of the virtual machine |
 <!-- END_TF_DOCS -->
