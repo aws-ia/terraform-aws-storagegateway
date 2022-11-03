@@ -29,6 +29,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_admin_user_list"></a> [admin\_user\_list](#input\_admin\_user\_list) | A list of users in the Active Directory that have admin access to the file share. | `list(any)` | <pre>[<br>  "Domain Admins"<br>]</pre> | no |
 | <a name="input_bucket_arn"></a> [bucket\_arn](#input\_bucket\_arn) | Storage Gateway ARN | `string` | n/a | yes |
+| <a name="input_cache_timout"></a> [cache\_timout](#input\_cache\_timout) | Cache stale timeout for automated cache refresh in seconds. Default is set to 1 hour (3600 seconds) can be changed to as low as 5 minutes (300 seconds) | `number` | `"3600"` | no |
 | <a name="input_gateway_arn"></a> [gateway\_arn](#input\_gateway\_arn) | Storage Gateway ARN | `string` | n/a | yes |
 | <a name="input_log_group_arn"></a> [log\_group\_arn](#input\_log\_group\_arn) | Cloudwatch Log Group ARN for audit logs | `string` | n/a | yes |
 | <a name="input_role_arn"></a> [role\_arn](#input\_role\_arn) | The ARN of the AWS Identity and Access Management (IAM) role that a file gateway assumes when it accesses the underlying storage. | `string` | n/a | yes |

@@ -89,18 +89,18 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_cache_size"></a> [cache\_size](#input\_cache\_size) | Total size of the cache disk that will be added to the storage gateway. Specified in gigabytes | `string` | `"150"` | no |
+| <a name="input_cache_size"></a> [cache\_size](#input\_cache\_size) | Total size of the cache disk that will be added to the storage gateway. Specified in gigabytes. Default is set to 150 but can be increased to 64000 | `string` | `"150"` | no |
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Cluster where the aws storage gateway will be deployed | `string` | n/a | yes |
-| <a name="input_cpus"></a> [cpus](#input\_cpus) | Total number of vcpus that will be configured on the storage gateway | `string` | `"4"` | no |
+| <a name="input_cpus"></a> [cpus](#input\_cpus) | Total number of vcpus that will be configured on the storage gateway. 4 vCPU is the minimum required for a small deployment. For a medium or a large deployment increase to 8 or 16 vCPU | `string` | `"4"` | no |
 | <a name="input_datacenter"></a> [datacenter](#input\_datacenter) | Name of the vsphere datacenter where the aws storage gateway will be deployed | `string` | n/a | yes |
 | <a name="input_datastore"></a> [datastore](#input\_datastore) | Name of the vsphere datastore where the aws storage gateway will be deployed | `string` | n/a | yes |
 | <a name="input_host"></a> [host](#input\_host) | Target host used during deployment of the ova | `string` | n/a | yes |
 | <a name="input_local_ovf_path"></a> [local\_ovf\_path](#input\_local\_ovf\_path) | Location on the local machine where the aws storage gateway ova is hosted. | `string` | `null` | no |
-| <a name="input_memory"></a> [memory](#input\_memory) | Total amount of memory that will be configured on the storage gateway. Specified in megabytes | `string` | `"16384"` | no |
+| <a name="input_memory"></a> [memory](#input\_memory) | Total amount of memory that will be configured on the storage gateway. Specified in megabytes. 16384 MB is the minimum required for a small deployment. For a medium or a large deployment increase to 32768 or 65536 | `string` | `"16384"` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of the storage gateway vm that will be created in vsphere | `string` | `"aws-storage-gateway"` | no |
 | <a name="input_network"></a> [network](#input\_network) | Name of the vsphere port group that the aws storage gateway will use | `string` | n/a | yes |
 | <a name="input_os_size"></a> [os\_size](#input\_os\_size) | Size of the OS disk of the appliance. Specified in gigabytes, default is the current appliance default. Likely doesn't need to be modified | `string` | `"80"` | no |
-| <a name="input_provisioning_type"></a> [provisioning\_type](#input\_provisioning\_type) | Disk provisioning type for the vm and all attached disks | `string` | `"thin"` | no |
+| <a name="input_provisioning_type"></a> [provisioning\_type](#input\_provisioning\_type) | Disk provisioning type for the vm and all attached disks | `string` | `"thick"` | no |
 | <a name="input_remote_ovf_url"></a> [remote\_ovf\_url](#input\_remote\_ovf\_url) | URL where the aws storage gateway ova is hosted. | `string` | `"https://d28e23pnuuv0hr.cloudfront.net/aws-storage-gateway-latest.ova"` | no |
 
 ## Outputs

@@ -34,3 +34,9 @@ variable "log_group_arn" {
   type        = string
   description = "Cloudwatch Log Group ARN for audit logs"
 }
+
+variable "cache_timout" {
+  type        = number
+  description = "Cache stale timeout for automated cache refresh in seconds. Default is set to 1 hour (3600 seconds) can be changed to as low as 5 minutes (300 seconds)"
+  default     = "3600"
+}
