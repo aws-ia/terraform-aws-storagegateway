@@ -14,7 +14,7 @@ resource "aws_storagegateway_smb_file_share" "smbshare" {
   smb_acl_enabled       = true
   audit_destination_arn = var.log_group_arn
   cache_attributes {
-    cache_stale_timeout_in_seconds = 3600
+    cache_stale_timeout_in_seconds = var.cache_timout
   }
   tags = {
     Environment = "dev"

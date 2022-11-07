@@ -1,13 +1,13 @@
 variable "cpus" {
   default     = "4"
   type        = string
-  description = "Total number of vcpus that will be configured on the storage gateway"
+  description = "Total number of vcpus that will be configured on the storage gateway. 4 vCPU is the minimum required for a small deployment. For a medium or a large deployment increase to 8 or 16 vCPU "
 }
 
 variable "memory" {
   default     = "16384"
   type        = string
-  description = "Total amount of memory that will be configured on the storage gateway. Specified in megabytes"
+  description = "Total amount of memory that will be configured on the storage gateway. Specified in megabytes. 16384 MB is the minimum required for a small deployment. For a medium or a large deployment increase to 32768 or 65536"
 }
 
 variable "datastore" {
@@ -50,7 +50,7 @@ variable "name" {
 variable "cache_size" {
   default     = "150"
   type        = string
-  description = "Total size of the cache disk that will be added to the storage gateway. Specified in gigabytes"
+  description = "Total size of the cache disk that will be added to the storage gateway. Specified in gigabytes. Default is set to 150 but can be increased to 64000"
 }
 
 variable "remote_ovf_url" {
@@ -66,7 +66,7 @@ variable "local_ovf_path" {
 }
 
 variable "provisioning_type" {
-  default     = "thin"
+  default     = "thick"
   type        = string
   description = "Disk provisioning type for the vm and all attached disks"
 }

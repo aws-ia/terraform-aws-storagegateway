@@ -5,10 +5,10 @@ This repository contains Terraform infrastructure code which creates resources r
 
 AWS Storage Gateway is available in 4 types :
 
-- Amazon S3 File Gateway
-- Amazon FSx File Gateway
-- Tape Gateway
-- Volume Gateway
+- Amazon S3 File Gateway (FILE\_S3)
+- Amazon FSx File Gateway (FILE\_FSX\_SMB)
+- Tape Gateway (VTL)
+- Volume Gateway (CACHED, STORED)
 
 The module requires a Gateway Type to be declared with a default set to FILE\_S3. For more details regarding the Storage Gateway types and their respective arguments can be found here :
 
@@ -34,7 +34,7 @@ Module configuration :
 
 ```hcl
 
-module "vsphere" {s
+module "vsphere" {
   source     = "aws-ia/storagegateway/aws//modules/vmware-sgw"
   datastore  = "vsan-datastore"
   datacenter = "Datacenter"
