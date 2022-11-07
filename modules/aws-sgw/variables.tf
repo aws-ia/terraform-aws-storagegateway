@@ -27,7 +27,7 @@ variable "timezone" {
 
 variable "gateway_type" {
   type        = string
-  description = " Type of the gateway"
+  description = "Type of the gateway. Valid options are FILE_S3, FILE_FSX_SMB, VTL, CACHED, STORED"
   default     = "FILE_S3"
 }
 

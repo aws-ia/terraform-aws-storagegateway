@@ -37,3 +37,8 @@ override.tf.json
 .terraformrc
 terraform.rc
 .terraform.lock.hcl
+
+go.mod
+go.sum
+
+.DS_Store
