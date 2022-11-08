@@ -19,8 +19,8 @@ module "sgw" {
   source             = "../../modules/aws-sgw"
   name               = random_pet.name.id
   gateway_ip_address = module.vsphere.vm_ip
-  domain_name        = "labster.local"
-  domain_username    = "svc_sgw_terraform"
+  domain_name        = var.domain_name
+  domain_username    = var.domain_username
   domain_password    = var.domain_password
   domain_controllers = var.domain_controllers
   gateway_type       = "FILE_S3"
