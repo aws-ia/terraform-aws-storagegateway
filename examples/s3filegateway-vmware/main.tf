@@ -17,7 +17,7 @@ locals {
 module "sgw" {
   depends_on         = [module.vsphere]
   source             = "../../modules/aws-sgw"
-  name               = random_pet.name.id
+  gateway_name       = random_pet.name.id
   gateway_ip_address = module.vsphere.vm_ip
   domain_name        = var.domain_name
   domain_username    = var.domain_username

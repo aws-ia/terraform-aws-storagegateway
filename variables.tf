@@ -1,9 +1,7 @@
-variable "name" {
-  description = "Name given resources"
+variable "gateway_name" {
   type        = string
-  default     = "aws-IA"
+  description = "Storage Gateway Name"
 }
-
 variable "domain_name" {
   type        = string
   description = "Domain name"
@@ -27,7 +25,7 @@ variable "timezone" {
 
 variable "gateway_type" {
   type        = string
-  description = " Type of the gateway"
+  description = "Type of the gateway. Valid options are FILE_S3, FILE_FSX_SMB, VTL, CACHED, STORED"
   default     = "FILE_S3"
 }
 

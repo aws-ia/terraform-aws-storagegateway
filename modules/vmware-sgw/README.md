@@ -10,7 +10,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_vsphere"></a> [vsphere](#provider\_vsphere) | 2.2.0 |
+| <a name="provider_vsphere"></a> [vsphere](#provider\_vsphere) | >=1.25.0 |
 
 ## Modules
 

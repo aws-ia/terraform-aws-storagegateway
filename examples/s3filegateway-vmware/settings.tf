@@ -11,6 +11,6 @@ provider "awscc" {
 provider "vsphere" {
   allow_unverified_ssl = true
   vsphere_server       = "10.0.0.252"
-  user                 = "svc_terraform@labster.local"
+  user                 = var.vsphere_user
   password             = var.vsphere_password
 }
