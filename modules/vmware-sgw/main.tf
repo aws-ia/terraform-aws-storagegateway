@@ -45,19 +45,19 @@ resource "vsphere_virtual_machine" "vm" {
   }
 
   disk {
-    label       = "os"
-    unit_number = 0
-    size        = var.os_size
+    label            = "os"
+    unit_number      = 0
+    size             = var.os_size
     thin_provisioned = false
-    eagerly_scrub = false
+    eagerly_scrub    = false
   }
 
   disk {
-    label       = "cache"
-    unit_number = 1
-    size        = var.cache_size
+    label            = "cache"
+    unit_number      = 1
+    size             = var.cache_size
     thin_provisioned = false
-    eagerly_scrub = false
+    eagerly_scrub    = false
   }
 
   ovf_deploy {
