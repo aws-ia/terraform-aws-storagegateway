@@ -71,6 +71,7 @@ resource "vsphere_virtual_machine" "vm" {
 
   lifecycle {
     ignore_changes = [
+      host_system_id,
       annotation,
       disk[0].io_share_count,
       disk[0].thin_provisioned,
