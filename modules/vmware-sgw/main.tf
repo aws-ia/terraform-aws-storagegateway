@@ -73,7 +73,9 @@ resource "vsphere_virtual_machine" "vm" {
     ignore_changes = [
       annotation,
       disk[0].io_share_count,
-      disk[1].io_share_count
+      disk[0].thin_provisioned,
+      disk[1].io_share_count,
+      disk[1].thin_provisioned,
     ]
   }
 }
