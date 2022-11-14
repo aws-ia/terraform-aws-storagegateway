@@ -34,7 +34,7 @@ No modules.
 | <a name="input_log_group_arn"></a> [log\_group\_arn](#input\_log\_group\_arn) | Cloudwatch Log Group ARN for audit logs | `string` | n/a | yes |
 | <a name="input_role_arn"></a> [role\_arn](#input\_role\_arn) | The ARN of the AWS Identity and Access Management (IAM) role that a file gateway assumes when it accesses the underlying storage. | `string` | n/a | yes |
 | <a name="input_share_name"></a> [share\_name](#input\_share\_name) | Name of the smb file share | `string` | n/a | yes |
-| <a name="input_storage_class"></a> [storage\_class](#input\_storage\_class) | Storage Gateway ARN | `string` | `"S3_STANDARD"` | no |
+| <a name="input_storage_class"></a> [storage\_class](#input\_storage\_class) | Storage class for SMB file share. Valid options are S3\_STANDARD \| S3\_INTELLIGENT\_TIERING \| S3\_STANDARD\_IA \| S3\_ONEZONE\_IA | `string` | `"S3_STANDARD"` | no |
 
 ## Outputs
 
