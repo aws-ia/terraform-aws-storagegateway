@@ -10,11 +10,9 @@ AWS Storage Gateway is available in 4 types :
 - Tape Gateway (VTL)
 - Volume Gateway (CACHED, STORED)
 
-The module requires a Gateway Type to be declared with a default set to FILE\_S3. For more details regarding the Storage Gateway types and their respective arguments can be found here :
+The module requires a Gateway Type to be declared with a default set to FILE\_S3. For more details regarding the Storage Gateway types and their respective arguments can be found [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/storagegateway_gateway)
 
-https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/storagegateway_gateway
-
-## Usage with VMware S3 File Gateway module
+## Usage with [`VMware S3 File Gateway module`](examples/s3filegateway-vmware)
 
 The VMware module requires the vsphere provider to be setup with the service account user name and password that has the necessary permissions in Vcenter to create a VM.
 
