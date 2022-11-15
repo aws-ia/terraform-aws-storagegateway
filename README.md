@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
 # AWS Storage Gateway Terraform module
 
-This repository contains Terraform infrastructure code which creates resources required to run Storage Gateway (https://aws.amazon.com/storagegateway/) in AWS and on premises.
+This repository contains Terraform infrastructure as code which creates resources required to run Storage Gateway (https://aws.amazon.com/storagegateway/) in AWS and on premises.
 
 AWS Storage Gateway is available in 4 types :
 
