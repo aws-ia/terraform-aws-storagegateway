@@ -10,7 +10,7 @@ provider "awscc" {
 
 provider "vsphere" {
   allow_unverified_ssl = true
-  vsphere_server       = "10.0.0.252"
+  vsphere_server       = var.vsphere_server
   user                 = var.vsphere_user
   password             = var.vsphere_password
 }

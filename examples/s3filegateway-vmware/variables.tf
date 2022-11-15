@@ -28,6 +28,13 @@ variable "domain_controllers" {
   sensitive   = true
   description = "Comma separated list of domain controllers."
 }
+
+variable "vsphere_server" {
+  type        = string
+  sensitive   = true
+  description = "vSphere server IP address or fqdn"
+}
+
 variable "vsphere_user" {
   type        = string
   sensitive   = true

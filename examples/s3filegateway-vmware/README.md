@@ -54,6 +54,7 @@
 | <a name="input_network"></a> [network](#input\_network) | Name of the vsphere port group that the aws storage gateway will use | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | The name of the region you wish to deploy into | `string` | `"us-east-1"` | no |
 | <a name="input_vsphere_password"></a> [vsphere\_password](#input\_vsphere\_password) | The password for the vcenter server | `string` | n/a | yes |
+| <a name="input_vsphere_server"></a> [vsphere\_server](#input\_vsphere\_server) | vSphere server IP address or fqdn | `string` | n/a | yes |
 | <a name="input_vsphere_user"></a> [vsphere\_user](#input\_vsphere\_user) | vSphere service account user name | `string` | n/a | yes |
 
 ## Outputs
