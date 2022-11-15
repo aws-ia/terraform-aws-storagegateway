@@ -17,10 +17,10 @@ locals {
 module "sgw" {
   depends_on         = [module.vsphere]
   source             = "../../modules/aws-sgw"
-  name               = random_pet.name.id
+  gateway_name       = random_pet.name.id
   gateway_ip_address = module.vsphere.vm_ip
-  domain_name        = "labster.local"
-  domain_username    = "svc_sgw_terraform"
+  domain_name        = var.domain_name
+  domain_username    = var.domain_username
   domain_password    = var.domain_password
   domain_controllers = var.domain_controllers
   gateway_type       = "FILE_S3"
@@ -31,11 +31,11 @@ module "sgw" {
 #######################################
 module "vsphere" {
   source     = "../../modules/vmware-sgw"
-  datastore  = "Helhest"
-  datacenter = "Datacenter"
-  network    = "VM Network"
-  cluster    = "ESX 7.0 Cluster"
-  host       = "10.0.0.248"
+  datastore  = var.datastore
+  datacenter = var.datacenter
+  network    = var.network
+  cluster    = var.cluster
+  host       = var.host
   name       = "${random_pet.name.id}-gateway"
 }
 

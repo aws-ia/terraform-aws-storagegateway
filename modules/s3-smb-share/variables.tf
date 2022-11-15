@@ -15,8 +15,12 @@ variable "bucket_arn" {
 
 variable "storage_class" {
   type        = string
-  description = "Storage Gateway ARN"
+  description = "Storage class for SMB file share. Valid options are S3_STANDARD | S3_INTELLIGENT_TIERING | S3_STANDARD_IA | S3_ONEZONE_IA"
   default     = "S3_STANDARD"
+  validation {
+    condition     = contains(["S3_STANDARD", "S3_INTELLIGENT_TIERING", "S3_STANDARD_IA", "S3_ONEZONE_IA"], var.storage_class)
+    error_message = "Incorrect Storage Class. S3_STANDARD | S3_INTELLIGENT_TIERING | S3_STANDARD_IA | S3_ONEZONE_IA"
+  }
 }
 
 variable "role_arn" {
