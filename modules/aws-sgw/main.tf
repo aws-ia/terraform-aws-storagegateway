@@ -16,7 +16,7 @@ resource "aws_storagegateway_gateway" "mysgw" {
 
   lifecycle {
     ignore_changes = [
-
+      tags
     ]
   }
 }
@@ -24,6 +24,12 @@ resource "aws_storagegateway_gateway" "mysgw" {
 resource "aws_storagegateway_cache" "sgw" {
   disk_id     = data.aws_storagegateway_local_disk.sgw.disk_id
   gateway_arn = aws_storagegateway_gateway.mysgw.arn
+
+  lifecycle {
+    ignore_changes = [
+      disk_id
+    ]
+  }
 }
 
 data "aws_storagegateway_local_disk" "sgw" {
