@@ -4,7 +4,7 @@
 
 resource "aws_storagegateway_gateway" "mysgw" {
   gateway_ip_address = var.gateway_ip_address
-  gateway_name       = "${var.name}_mysgw"
+  gateway_name       = var.gateway_name
   gateway_timezone   = var.timezone
   gateway_type       = var.gateway_type
   smb_active_directory_settings {

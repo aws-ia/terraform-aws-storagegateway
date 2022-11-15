@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
 # AWS Storage Gateway Terraform module
 
-This repository contains Terraform infrastructure code which creates resources required to run Storage Gateway (https://aws.amazon.com/storagegateway/) in AWS and on premises.
+This repository contains Terraform infrastructure as code which creates resources required to run Storage Gateway (https://aws.amazon.com/storagegateway/) in AWS and on premises.
 
 AWS Storage Gateway is available in 4 types :
 
@@ -10,15 +10,15 @@ AWS Storage Gateway is available in 4 types :
 - Tape Gateway (VTL)
 - Volume Gateway (CACHED, STORED)
 
-The module requires a Gateway Type to be declared with a default set to FILE\_S3. For more details regarding the Storage Gateway types and their respective arguments can be found here :
-
-https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/storagegateway_gateway
+The module requires a Gateway type to be declared which defaults to FILE\_S3 as an example. For more details regarding the Storage Gateway types and their respective arguments can be found [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/storagegateway_gateway).
 
 ## Usage with VMware S3 File Gateway module
 
-The VMware module requires the vsphere provider to be setup with the service account user name and password that has the necessary permissions in Vcenter to create a VM.
+Link to the example : [s3filegateway-vmware](examples/s3filegateway-vmware)
 
-Always avoid storing clear text passwords in your code.
+### Prerequisists
+
+- The VMware module requires the vsphere provider to be setup with the service account user name and password that has the necessary permissions in Vcenter to create a VM. This is found in the [settings.tf](examples/s3filegateway-vmware/settings.tf) file.
 
 ```hcl
 
@@ -30,7 +30,9 @@ provider "vsphere" {
 }
 
 ```
-Module configuration :
+Note that the module requires connectivity to the vCenter server. Therefore it needs to be deployed from a virtual machine that can reach the vCenter APIs. You may also [Terraform Cloud Agents](https://developer.hashicorp.com/terraform/cloud-docs/agents) if you use already use Terrform Cloud. This allows the modules to be deployed remotely.
+
+### [vSphere Module](modules/vmware-sgw/)
 
 ```hcl
 
@@ -44,11 +46,13 @@ module "vsphere" {
   name       = "my-s3fgw"
 }
 ```
-Then pass the virtual machine IP address to the next module as the gateway IP address.
-The module also requires domain user name and passwords for storage gateway to join the domain.
+The virtual machine IP address needs to be passed to next module as the gateway IP address. In addition, the module also requires domain user name and passwords for the storage gateway to join the domain.
 
-Always avoid storing clear text passwords in your code. Note that, the domain password is passed as a string variable and can be found in the Terraform state file. Always protect your state files with least privilege access.
+Note that in order to protect sensitive data such as domain credentials etc., certain variables are marked as sensitive. It is general best practice to never store credentials and secrets in git repositories. For more information about protecting sensitive variables refer to [this](https://developer.hashicorp.com/terraform/tutorials/configuration-language/sensitive-variables#reference-sensitive-variables) documentation.
 
+Also note that the domain password despite being a sensitive vairable can be still found in the Terraform state file. Follow [this guidance](https://developer.hashicorp.com/terraform/language/state/sensitive-data) to protect state file from unauthorized access.
+
+### [Storage Gateway Module](modules/aws-sgw/)
 ```hcl
 module "sgw" {
   source             = "aws-ia/storagegateway/aws//modules/aws-sgw"
@@ -62,9 +66,6 @@ module "sgw" {
 }
 
 ```
-Note that the module requires connectivity to the vCenter server. Terraform Cloud Agents can also be leveraged while running this remotely through Terraform cloud. More information on cloud agents can be found here :
-
-https://developer.hashicorp.com/terraform/cloud-docs/agents
 
 ## Setting up S3 buckets and SMB File Share
 
@@ -110,6 +111,13 @@ module "smb_share" {
 }
 
 ```
+## Support & Feedback
+
+Storage Gateway module for Terraform is maintained by AWS Solution Architects. It is not part of an AWS service and support is provided best-effort by the AWS Storage community.
+
+To post feedback, submit feature ideas, or report bugs, please use the Issues section of this GitHub repo.
+
+If you are interested in contributing to the Storage Gateway module, see the Contribution guide.
 
 ## Requirements
 
@@ -145,10 +153,10 @@ No modules.
 | <a name="input_domain_password"></a> [domain\_password](#input\_domain\_password) | The password for the service account on your self-managed AD domain that SGW will use to join to your AD domain | `string` | n/a | yes |
 | <a name="input_domain_username"></a> [domain\_username](#input\_domain\_username) | The user name for the service account on your self-managed AD domain that SGW use to join to your AD domain | `string` | n/a | yes |
 | <a name="input_gateway_ip_address"></a> [gateway\_ip\_address](#input\_gateway\_ip\_address) | IP Address of the SGW appliance in vSphere | `string` | n/a | yes |
+| <a name="input_gateway_name"></a> [gateway\_name](#input\_gateway\_name) | Storage Gateway Name | `string` | n/a | yes |
 | <a name="input_disk_path"></a> [disk\_path](#input\_disk\_path) | Path on the SGW appliance in vsphere where the cache disk resides on the OS | `string` | `"/dev/sdb"` | no |
 | <a name="input_domain_controllers"></a> [domain\_controllers](#input\_domain\_controllers) | Comma separated list of domain controllers. | `list(any)` | `[]` | no |
-| <a name="input_gateway_type"></a> [gateway\_type](#input\_gateway\_type) | Type of the gateway | `string` | `"FILE_S3"` | no |
-| <a name="input_name"></a> [name](#input\_name) | Name given resources | `string` | `"aws-IA"` | no |
+| <a name="input_gateway_type"></a> [gateway\_type](#input\_gateway\_type) | Type of the gateway. Valid options are FILE\_S3, FILE\_FSX\_SMB, VTL, CACHED, STORED | `string` | `"FILE_S3"` | no |
 | <a name="input_timezone"></a> [timezone](#input\_timezone) | Time zone for the gateway. The time zone is of the format GMT, GMT-hr:mm, or GMT+hr:mm. | `string` | `"GMT"` | no |
 
 ## Outputs

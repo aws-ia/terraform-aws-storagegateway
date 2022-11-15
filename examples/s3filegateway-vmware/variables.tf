@@ -29,9 +29,45 @@ variable "domain_controllers" {
   description = "Comma separated list of domain controllers."
 }
 
+variable "vsphere_server" {
+  type        = string
+  sensitive   = true
+  description = "vSphere server IP address or fqdn"
+}
+
+variable "vsphere_user" {
+  type        = string
+  sensitive   = true
+  description = "vSphere service account user name"
+}
+
 variable "vsphere_password" {
   type        = string
   sensitive   = true
   description = "The password for the vcenter server"
 }
 
+variable "datastore" {
+  type        = string
+  description = "Name of the vsphere datastore where the aws storage gateway will be deployed"
+}
+
+variable "cluster" {
+  type        = string
+  description = "Cluster where the aws storage gateway will be deployed"
+}
+
+variable "host" {
+  type        = string
+  description = "Target host used during deployment of the ova"
+}
+
+variable "datacenter" {
+  type        = string
+  description = "Name of the vsphere datacenter where the aws storage gateway will be deployed"
+}
+
+variable "network" {
+  type        = string
+  description = "Name of the vsphere port group that the aws storage gateway will use"
+}
