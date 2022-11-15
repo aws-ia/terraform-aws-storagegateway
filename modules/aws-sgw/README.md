@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
-# AWS Storage Gateway Terraform module
+# AWS Storage Gateway Terraform sub-module
 
-Deploys a Storage Gateway on AWS, configures Storage Gateway cache and maps it local storage disk. Requires the Storage Gateway appliance to be deployed first using the module [vmware-sgw](../vmware-sgw/). For an end to end example on VMware, refer to the [s3filegateway-vmware](../../examples/s3filegateway-vmware/) example.
+Deploys a Storage Gateway on AWS, configures Storage Gateway cache and maps it to a local storage disk. Requires the Storage Gateway appliance to be deployed first using the module [vmware-sgw](../vmware-sgw/). For an end to end example on VMware, refer to the [s3filegateway-vmware](../../examples/s3filegateway-vmware/) example.
 
 # AWS Storage Gateway types
 

@@ -10,17 +10,15 @@ AWS Storage Gateway is available in 4 types :
 - Tape Gateway (VTL)
 - Volume Gateway (CACHED, STORED)
 
-The module requires a Gateway Type to be declared with a default set to FILE\_S3. For more details regarding the Storage Gateway types and their respective arguments can be found [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/storagegateway_gateway)
+The module requires a Gateway type to be declared which defaults to FILE\_S3 as an example. For more details regarding the Storage Gateway types and their respective arguments can be found [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/storagegateway_gateway).
 
 ## Usage with VMware S3 File Gateway module
 
-Link to the module : [s3filegateway-vmware](examples/s3filegateway-vmware)
+Link to the example : [s3filegateway-vmware](examples/s3filegateway-vmware)
 
-The VMware module requires the vsphere provider to be setup with the service account user name and password that has the necessary permissions in Vcenter to create a VM. This is found in the settings.tf file.
+### Prerequisists
 
-The variables are marked as sensitive in the module and it is strongly recommended to not store credentials and secrets in git repositories.
-
-[settings.tf](examples/s3filegateway-vmware/settings.tf)
+- The VMware module requires the vsphere provider to be setup with the service account user name and password that has the necessary permissions in Vcenter to create a VM. This is found in the [settings.tf](examples/s3filegateway-vmware/settings.tf) file.
 
 ```hcl
 
@@ -32,7 +30,9 @@ provider "vsphere" {
 }
 
 ```
-Module configuration
+Note that the module requires connectivity to the vCenter server. Therefore it needs to be deployed from a virtual machine that can reach the vCenter APIs. You may also [Terraform Cloud Agents](https://developer.hashicorp.com/terraform/cloud-docs/agents) if you use already use Terrform Cloud. This allows the modules to be deployed remotely.
+
+### [vSphere Module](modules/vmware-sgw/)
 
 ```hcl
 
@@ -46,11 +46,13 @@ module "vsphere" {
   name       = "my-s3fgw"
 }
 ```
-Then pass the virtual machine IP address to the next module as the gateway IP address.
-The module also requires domain user name and passwords for storage gateway to join the domain.
+The virtual machine IP address needs to be passed to next module as the gateway IP address. In addition, the module also requires domain user name and passwords for the storage gateway to join the domain.
 
-Always avoid storing clear text passwords in your code. Note that, the domain password is passed as a string variable and can be found in the Terraform state file. Always protect your state files with least privilege access.
+Note that in order to protect sensitive data such as domain credentials etc., certain variables are marked as sensitive. It is general best practice to never store credentials and secrets in git repositories. For more information about protecting sensitive variables refer to [this](https://developer.hashicorp.com/terraform/tutorials/configuration-language/sensitive-variables#reference-sensitive-variables) documentation.
 
+Also note that the domain password despite being a sensitive vairable can be still found in the Terraform state file. Follow [this guidance](https://developer.hashicorp.com/terraform/language/state/sensitive-data) to protect state file from unauthorized access.
+
+### [Storage Gateway Module](modules/aws-sgw/)
 ```hcl
 module "sgw" {
   source             = "aws-ia/storagegateway/aws//modules/aws-sgw"
@@ -64,9 +66,6 @@ module "sgw" {
 }
 
 ```
-Note that the module requires connectivity to the vCenter server. Terraform Cloud Agents can also be leveraged while running this remotely through Terraform cloud. More information on cloud agents can be found here :
-
-https://developer.hashicorp.com/terraform/cloud-docs/agents
 
 ## Setting up S3 buckets and SMB File Share
 
