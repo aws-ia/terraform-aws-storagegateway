@@ -13,7 +13,7 @@ resource "aws_storagegateway_gateway" "mysgw" {
     username           = var.domain_username
     domain_controllers = var.domain_controllers
   }
-  
+
   lifecycle {
     ignore_changes = [
       tags
