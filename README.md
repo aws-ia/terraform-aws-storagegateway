@@ -23,14 +23,17 @@ Link to the example : [s3filegateway-vmware](examples/s3filegateway-vmware)
 ```hcl
 
 provider "vsphere" {
-  allow_unverified_ssl = true
-  vsphere_server       = "10.0.0.10"
-  user                 = "svc_terraform.domain.local"
-  password             = "vcenter_password"
+  allow_unverified_ssl = var.allow_unverified_ssl
+  vsphere_server       = var.vsphere_server
+  user                 = var.vsphere_user
+  password             = var.vsphere_password
 }
 
 ```
-Note that the module requires connectivity to the vCenter server. Therefore it needs to be deployed from a virtual machine that can reach the vCenter APIs. You may also [Terraform Cloud Agents](https://developer.hashicorp.com/terraform/cloud-docs/agents) if you use already use Terrform Cloud. This allows the modules to be deployed remotely.
+
+Note that var.allow\_unverified\_ssl is a boolean that can be set to true to disable SSL certificate verification. This should be used with care as it could allow an attacker to intercept your authentication token. The default value is set to false but can be changed to true for testing purposes only.
+
+The module also requires connectivity to the vCenter server. Therefore it needs to be deployed from a virtual machine that can reach the vCenter APIs. You may also [Terraform Cloud Agents](https://developer.hashicorp.com/terraform/cloud-docs/agents) if you use already use Terrform Cloud. This allows the modules to be deployed remotely.
 
 ### [vSphere Module](modules/vmware-sgw/)
 
@@ -38,30 +41,32 @@ Note that the module requires connectivity to the vCenter server. Therefore it n
 
 module "vsphere" {
   source     = "aws-ia/storagegateway/aws//modules/vmware-sgw"
-  datastore  = "vsan-datastore"
-  datacenter = "Datacenter"
-  network    = "VM Network"
-  cluster    = "ESX 7.0 Cluster"
-  host       = "10.0.0.2"
+  datastore  = var.datastore
+  datacenter = var.datacenter
+  network    = var.network
+  cluster    = var.cluster
+  host       = var.host
   name       = "my-s3fgw"
 }
 ```
+
 The virtual machine IP address needs to be passed to next module as the gateway IP address. In addition, the module also requires domain user name and passwords for the storage gateway to join the domain.
 
-Note that in order to protect sensitive data such as domain credentials etc., certain variables are marked as sensitive. It is general best practice to never store credentials and secrets in git repositories. For more information about protecting sensitive variables refer to [this](https://developer.hashicorp.com/terraform/tutorials/configuration-language/sensitive-variables#reference-sensitive-variables) documentation.
+Note that in order to protect sensitive data such as domain credentials etc., certain variables are marked as sensitive. It is general best practice to never store credentials and secrets in git repositories. For more information about protecting sensitive variables refer to [this](https://developer.hashicorp.com/terraform/tutorials/configuration-language/sensitive-variables#reference-sensitive-variables) documentation. Also as a best practice consider the use of services such as [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/), [Hashicorp Vault](https://aws.amazon.com/secrets-manager/) or [Terraform Cloud](https://www.hashicorp.com/blog/managing-credentials-in-terraform-cloud-and-enterprise) to dynamically inject your secrets.
 
-Also note that the domain password despite being a sensitive vairable can be still found in the Terraform state file. Follow [this guidance](https://developer.hashicorp.com/terraform/language/state/sensitive-data) to protect state file from unauthorized access.
+Also note that the domain password despite being a sensitive variable can be still found in the Terraform state file. Follow [this guidance](https://developer.hashicorp.com/terraform/language/state/sensitive-data) to protect state file from unauthorized access.
 
 ### [Storage Gateway Module](modules/aws-sgw/)
+
 ```hcl
 module "sgw" {
   source             = "aws-ia/storagegateway/aws//modules/aws-sgw"
   name               = "my-sgw"
   gateway_ip_address = module.vsphere.vm_ip
-  domain_name        = "domain.local"
-  domain_username    = "domain_svc_account"
-  domain_password    = "domain_svc_password"
-  domain_controllers = ["10.0.0.1"]
+  domain_name        = var.domain_name
+  domain_username    = var.domain_username
+  domain_password    = var.domain_password
+  domain_controllers = var.domain_controllers
   gateway_type       = "FILE_S3"       
 }
 
