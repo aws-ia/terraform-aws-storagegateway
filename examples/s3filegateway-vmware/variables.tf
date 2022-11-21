@@ -29,6 +29,12 @@ variable "domain_controllers" {
   description = "Comma separated list of domain controllers."
 }
 
+variable "allow_unverified_ssl" {
+  type        = bool
+  description = "Boolean that can be set to true to disable SSL certificate verification."
+  default     = false
+}
+
 variable "vsphere_server" {
   type        = string
   sensitive   = true

@@ -30,6 +30,7 @@ variable "role_arn" {
 
 variable "admin_user_list" {
   type        = list(any)
+  sensitive   = true
   description = "A list of users in the Active Directory that have admin access to the file share."
   default     = ["Domain Admins"]
 }
