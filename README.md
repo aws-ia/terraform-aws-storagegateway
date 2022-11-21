@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
 # AWS Storage Gateway Terraform module
 
-This repository contains Terraform infrastructure as code which creates resources required to run Storage Gateway (https://aws.amazon.com/storagegateway/) in AWS and on premises.
+This repository contains Terraform code which creates resources required to run Storage Gateway (https://aws.amazon.com/storagegateway/) in AWS and on premises.
 
 AWS Storage Gateway is available in 4 types :
 
@@ -10,7 +10,7 @@ AWS Storage Gateway is available in 4 types :
 - Tape Gateway (VTL)
 - Volume Gateway (CACHED, STORED)
 
-The module requires a Gateway type to be declared which defaults to FILE\_S3 as an example. For more details regarding the Storage Gateway types and their respective arguments can be found [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/storagegateway_gateway).
+The module requires a Gateway type to be declared. The default is configured to FILE\_S3 as an example. For more details regarding the Storage Gateway types and their respective arguments can be found [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/storagegateway_gateway).
 
 ## Usage with VMware S3 File Gateway module
 
@@ -18,7 +18,7 @@ Link to the example : [s3filegateway-vmware](examples/s3filegateway-vmware)
 
 ### Prerequisists
 
-- The VMware module requires the vsphere provider to be setup with the service account user name and password that has the necessary permissions in Vcenter to create a VM. This is found in the [settings.tf](examples/s3filegateway-vmware/settings.tf) file.
+- The VMware module requires the vsphere provider to be setup with a service account user name and password that has the necessary permissions in Vcenter to create a VM. This is found in the [settings.tf](examples/s3filegateway-vmware/settings.tf) file.
 
 ```hcl
 
@@ -33,7 +33,7 @@ provider "vsphere" {
 
 Note that var.allow\_unverified\_ssl is a boolean that can be set to true to disable SSL certificate verification. This should be used with care as it could allow an attacker to intercept your authentication token. The default value is set to false but can be changed to true for testing purposes only.
 
-The module also requires connectivity to the vCenter server. Therefore it needs to be deployed from a virtual machine that can reach the vCenter APIs. You may also [Terraform Cloud Agents](https://developer.hashicorp.com/terraform/cloud-docs/agents) if you use already use Terrform Cloud. This allows the modules to be deployed remotely.
+The module also requires connectivity to your vCenter server. Therefore it needs to be deployed from a virtual machine that can reach the vCenter APIs. You may also [Terraform Cloud Agents](https://developer.hashicorp.com/terraform/cloud-docs/agents) if you use already use Terrform Cloud. This allows the modules to be deployed remotely.
 
 ### [vSphere Module](modules/vmware-sgw/)
 
@@ -75,15 +75,17 @@ module "sgw" {
 ## Setting up S3 buckets and SMB File Share
 
 ```hcl
+
 module "s3_bucket" {
-  source                  = "terraform-aws-modules/s3-bucket/aws"
-  version                 = ">=3.5.0"
-  bucket                  = "bucket-name"
-  acl                     = "private"
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  source                   = "terraform-aws-modules/s3-bucket/aws"
+  version                  = ">=3.5.0"
+  bucket                   = "bucket-name"
+  control_object_ownership = true
+  object_ownership         = "BucketOwnerEnforced"
+  block_public_acls        = true
+  block_public_policy      = true
+  ignore_public_acls       = true
+  restrict_public_buckets  = true
 
   server_side_encryption_configuration = {
     rule = {
@@ -99,7 +101,7 @@ module "s3_bucket" {
   }
 
   versioning = {
-    enabled = true
+    enabled = false
   }
 }
 
@@ -116,13 +118,18 @@ module "smb_share" {
 }
 
 ```
+
+Note that versioning is set to false by default for the S3 bucket for the SMB file share. Enabling S3 Versioning can increase storage costs within Amazon S3. Please see [here](https://docs.aws.amazon.com/filegateway/latest/files3/CreatingAnSMBFileShare.html) for further information on whether S3 Versioning is right for your workload.
+
+The example also includes "aws\_kms\_key" resource block to create a KMS key. For production deployments, you should pass in a key policy that restricts the use of the key based on your access requirements. Refer to this [link](https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html) for information.
+
 ## Support & Feedback
 
 Storage Gateway module for Terraform is maintained by AWS Solution Architects. It is not part of an AWS service and support is provided best-effort by the AWS Storage community.
 
-To post feedback, submit feature ideas, or report bugs, please use the Issues section of this GitHub repo.
+To post feedback, submit feature ideas, or report bugs, please use the [Issues section](https://github.com/aws-ia/terraform-aws-storagegateway/issues) of this GitHub repo.
 
-If you are interested in contributing to the Storage Gateway module, see the Contribution guide.
+If you are interested in contributing to the Storage Gateway module, see the [Contribution guide](https://github.com/aws-ia/terraform-aws-storagegateway/blob/main/CONTRIBUTING.md).
 
 ## Requirements
 

@@ -42,15 +42,18 @@ module "vsphere" {
 #######################################
 # Create S3 bucket for File Gateway 
 #######################################
+#Versioning disabled as per guidnance from the create SMB file share documentation. Read https://docs.aws.amazon.com/filegateway/latest/files3/CreatingAnSMBFileShare.html
+#tfsec:ignore:aws-s3-enable-versioning
 module "s3_bucket" {
-  source                  = "terraform-aws-modules/s3-bucket/aws"
-  version                 = ">=3.5.0"
-  bucket                  = lower("${random_pet.name.id}-${module.sgw.storage_gateway.gateway_id}-s3-fgw")
-  acl                     = "private"
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  source                   = "terraform-aws-modules/s3-bucket/aws"
+  version                  = ">=3.5.0"
+  bucket                   = lower("${random_pet.name.id}-${module.sgw.storage_gateway.gateway_id}-s3-fgw")
+  control_object_ownership = true
+  object_ownership         = "BucketOwnerEnforced"
+  block_public_acls        = true
+  block_public_policy      = true
+  ignore_public_acls       = true
+  restrict_public_buckets  = true
 
   server_side_encryption_configuration = {
     rule = {
@@ -66,7 +69,7 @@ module "s3_bucket" {
   }
 
   versioning = {
-    enabled = true
+    enabled = false
   }
 }
 
@@ -89,14 +92,15 @@ module "smb_share" {
 #TFSEC Bucket logging for services access logs supressed. 
 #tfsec:ignore:aws-s3-enable-bucket-logging
 module "log_delivery_bucket" {
-  source                  = "terraform-aws-modules/s3-bucket/aws"
-  version                 = ">=3.5.0"
-  bucket                  = lower("${random_pet.name.id}-${module.sgw.storage_gateway.gateway_id}-s3-fgw-logs")
-  acl                     = "private"
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  source                   = "terraform-aws-modules/s3-bucket/aws"
+  version                  = ">=3.5.0"
+  bucket                   = lower("${random_pet.name.id}-${module.sgw.storage_gateway.gateway_id}-s3-fgw-logs")
+  control_object_ownership = true
+  object_ownership         = "BucketOwnerEnforced"
+  block_public_acls        = true
+  block_public_policy      = true
+  ignore_public_acls       = true
+  restrict_public_buckets  = true
 
   server_side_encryption_configuration = {
     rule = {
