@@ -2,6 +2,7 @@ variable "gateway_name" {
   type        = string
   description = "Storage Gateway Name"
 }
+
 variable "domain_name" {
   type        = string
   sensitive   = true

@@ -1,9 +1,7 @@
-
 output "storage_gateway_id" {
   value       = module.sgw.storage_gateway.gateway_id
   description = "Storage Gateway ID"
 }
-
 
 output "s3_bucket_id" {
   value       = module.s3_bucket.s3_bucket_id
@@ -24,5 +22,3 @@ output "smb_share_path" {
   value       = module.smb_share.smb_share_path
   description = "SMB share mountpoint path"
 }
-
-

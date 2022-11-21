@@ -14,6 +14,7 @@ locals {
 ######################################
 # Create S3  File Gateway
 ######################################
+
 module "sgw" {
   depends_on         = [module.vsphere]
   source             = "../../modules/aws-sgw"
@@ -29,6 +30,7 @@ module "sgw" {
 #######################################
 # Create OVF ESXi  File Gateway
 #######################################
+
 module "vsphere" {
   source     = "../../modules/vmware-sgw"
   datastore  = var.datastore
@@ -42,6 +44,7 @@ module "vsphere" {
 #######################################
 # Create S3 bucket for File Gateway 
 #######################################
+
 #Versioning disabled as per guidnance from the create SMB file share documentation. Read https://docs.aws.amazon.com/filegateway/latest/files3/CreatingAnSMBFileShare.html
 #tfsec:ignore:aws-s3-enable-versioning
 module "s3_bucket" {
@@ -76,6 +79,7 @@ module "s3_bucket" {
 #######################################
 # Create SMB File share
 #######################################
+
 module "smb_share" {
   source        = "../../modules/s3-smb-share"
   share_name    = "${local.share_name}-fs"
