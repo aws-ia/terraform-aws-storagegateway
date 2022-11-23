@@ -7,6 +7,7 @@ resource "aws_storagegateway_gateway" "mysgw" {
   gateway_name       = var.gateway_name
   gateway_timezone   = var.timezone
   gateway_type       = var.gateway_type
+
   smb_active_directory_settings {
     domain_name        = var.domain_name
     password           = var.domain_password

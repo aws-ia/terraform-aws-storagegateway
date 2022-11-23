@@ -27,7 +27,10 @@ data "vsphere_network" "network" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-# configuration values of the appliance that will be deployed
+################################################################################
+# Creating vSphere virtual machine
+################################################################################
+
 resource "vsphere_virtual_machine" "vm" {
   host_system_id             = data.vsphere_host.host.id
   resource_pool_id           = data.vsphere_compute_cluster.cluster.resource_pool_id
