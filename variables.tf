@@ -2,7 +2,6 @@ variable "gateway_name" {
   type        = string
   description = "Storage Gateway Name"
 }
-
 variable "domain_name" {
   type        = string
   sensitive   = true
@@ -23,14 +22,22 @@ variable "domain_password" {
 
 variable "timezone" {
   type        = string
-  description = "Time zone for the gateway. The time zone is of the format GMT, GMT-hr:mm, or GMT+hr:mm."
+  description = "Time zone for the gateway. The time zone is of the format GMT, GMT-hr:mm, or GMT+hr:mm.For example, GMT-4:00 indicates the time is 4 hours behind GMT. Avoid prefixing with 0"
   default     = "GMT"
+  validation {
+    condition     = can(regex("^GMT[+-](([1-9]|1[0-2]):([0-5][0-9]))|GMT$", var.timezone))
+    error_message = "Time zone for the gateway. The time zone is of the format GMT, GMT-hr:mm, or GMT+hr:mm."
+  }
 }
 
 variable "gateway_type" {
   type        = string
   description = "Type of the gateway. Valid options are FILE_S3, FILE_FSX_SMB, VTL, CACHED, STORED"
   default     = "FILE_S3"
+  validation {
+    condition     = contains(["FILE_S3", "FILE_FSX_SMB", "VTL", "CACHED", "STORED"], var.gateway_type)
+    error_message = "Incorrect gateway type. Valid options are FILE_S3, FILE_FSX_SMB, VTL, CACHED, STORED"
+  }
 }
 
 variable "gateway_ip_address" {
