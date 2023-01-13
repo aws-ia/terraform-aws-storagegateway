@@ -19,13 +19,15 @@ resource "aws_storagegateway_gateway" "mysgw" {
 
     content {
 
-      domain_name        = var.domain_name
-      password           = var.domain_password
-      username           = var.domain_username
-      domain_controllers = var.domain_controllers
+      # Required inputs
+      domain_name = var.domain_name
+      password    = var.domain_password
+      username    = var.domain_username
 
-      timeout_in_seconds  = var.timeout_in_seconds
-      organizational_unit = var.organizational_unit
+      # Optional inputs
+      domain_controllers  = var.domain_controllers
+      timeout_in_seconds  = var.timeout_in_seconds >= 0 ? var.timeout_in_seconds : null
+      organizational_unit = len(var.organizational_unit) > 0 ? var.organizational_unit : null
 
     }
 
