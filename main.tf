@@ -2,17 +2,11 @@
 # Storage Gateway
 ################################################################################
 
-locals {
-  create_smb_active_directory_settings = (var.join_smb_domain == true && length(var.domain_controllers) > 0 && length(var.domain_name) > 0 && length(var.domain_password) > 0 && length(var.domain_username) > 0)
-}
-
-
 resource "aws_storagegateway_gateway" "mysgw" {
   gateway_ip_address = var.gateway_ip_address
   gateway_name       = var.gateway_name
   gateway_timezone   = var.timezone
   gateway_type       = var.gateway_type
-
 
   dynamic "smb_active_directory_settings" {
     for_each = local.create_smb_active_directory_settings == true ? [1] : []
@@ -31,8 +25,12 @@ resource "aws_storagegateway_gateway" "mysgw" {
 
     }
 
+  smb_active_directory_settings {
+    domain_name        = var.domain_name
+    password           = var.domain_password
+    username           = var.domain_username
+    domain_controllers = var.domain_controllers
   }
-
 
   lifecycle {
     ignore_changes = [
