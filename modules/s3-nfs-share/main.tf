@@ -3,6 +3,7 @@
 ################################################################################
 
 resource "aws_storagegateway_nfs_file_share" "nfsshare" {
+  file_share_name       = var.share_name
   client_list           = var.client_list
   gateway_arn           = var.gateway_arn
   location_arn          = var.bucket_arn
