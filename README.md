@@ -141,13 +141,13 @@ module "smb_share" {
 
 ```hcl
 module "nfs_share" {
-  source        = "../../modules/s3-nfs-share"
-  share_name    = "${local.share_name}-fs"
+  source        = "aws-ia/storagegateway/aws//modules/s3-nfs-share"
+  share_name    = "nfs_share_name"
   gateway_arn   = module.sgw.storage_gateway.arn
   bucket_arn    = module.s3_bucket.s3_bucket_arn
-  role_arn      = aws_iam_role.sgw.arn
-  log_group_arn = aws_cloudwatch_log_group.smbshare.arn
-  client_list   = var.client_list
+  role_arn      = "iam-role-for-sgw-s3"
+  log_group_arn = "log-group-arn"
+  client_list   = ["10.0.0.0/24","10.0.1.0/24"]
 }
 ```
 
