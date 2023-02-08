@@ -14,7 +14,7 @@ The module requires a Gateway type to be declared. The default is configured to 
 
 ## Usage with VMware S3 File Gateway module
 
-Link to the example : [s3filegateway-vmware](examples/s3filegateway-vmware)
+- Link to the S3 SMB Storage Gateway example for VMware: [s3filegateway-vmware](examples/s3filegateway-vmware)
 
 ### Prerequisists
 
@@ -63,6 +63,7 @@ module "sgw" {
   source             = "aws-ia/storagegateway/aws//modules/aws-sgw"
   name               = "my-sgw"
   gateway_ip_address = module.vsphere.vm_ip
+  join_smb_domain    = true
   domain_name        = var.domain_name
   domain_username    = var.domain_username
   domain_password    = var.domain_password
@@ -72,10 +73,26 @@ module "sgw" {
 
 ```
 
-## Setting up S3 buckets and SMB File Share
+Note that variable "join\_smb\_domain" is set to true by default and therefore optional. To create a Storage Gateway that is not joined to the domain set "join\_smb\_domain" to false.
+
+Example :
 
 ```hcl
+module "sgw" {
+  source             = "aws-ia/storagegateway/aws//modules/aws-sgw"
+  name               = "my-sgw"
+  gateway_ip_address = module.vsphere.vm_ip
+  join_smb_domain    = false
+  gateway_type       = "FILE_S3"       
+}
 
+```
+
+Refer to to the S3 NFS Storage Gateway example for VMware for an end to end example: [s3-nfs-filegateway-vmware](examples/s3-nfs-filegateway-vmware)
+
+## Setting up S3 buckets for S3 File Gateway
+
+```hcl
 module "s3_bucket" {
   source                   = "terraform-aws-modules/s3-bucket/aws"
   version                  = ">=3.5.0"
@@ -104,10 +121,12 @@ module "s3_bucket" {
     enabled = false
   }
 }
+```
+Note that versioning is set to false by default for the S3 bucket for the file share for Storage Gateway. Enabling S3 Versioning can increase storage costs within Amazon S3. Please see [here](https://docs.aws.amazon.com/filegateway/latest/files3/CreatingAnSMBFileShare.html) for further information on whether S3 Versioning is right for your workload.
 
-#######################################
-# Create SMB File share
-#######################################
+## Setting up SMB File shares
+
+```hcl
 module "smb_share" {
   source        = "aws-ia/storagegateway/aws//modules/s3-smb-share"
   share_name    = "smb_share_name"
@@ -116,12 +135,23 @@ module "smb_share" {
   role_arn      = "iam-role-for-sgw-s3"
   log_group_arn = "log-group-arn"
 }
-
 ```
 
-Note that versioning is set to false by default for the S3 bucket for the SMB file share. Enabling S3 Versioning can increase storage costs within Amazon S3. Please see [here](https://docs.aws.amazon.com/filegateway/latest/files3/CreatingAnSMBFileShare.html) for further information on whether S3 Versioning is right for your workload.
+## Setting up NFS File shares
 
-The example also includes "aws\_kms\_key" resource block to create a KMS key. For production deployments, you should pass in a key policy that restricts the use of the key based on your access requirements. Refer to this [link](https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html) for information.
+```hcl
+module "nfs_share" {
+  source        = "../../modules/s3-nfs-share"
+  share_name    = "${local.share_name}-fs"
+  gateway_arn   = module.sgw.storage_gateway.arn
+  bucket_arn    = module.s3_bucket.s3_bucket_arn
+  role_arn      = aws_iam_role.sgw.arn
+  log_group_arn = aws_cloudwatch_log_group.smbshare.arn
+  client_list   = var.client_list
+}
+```
+
+The examples also includes "aws\_kms\_key" resource block to create a KMS key. For production deployments, you should pass in a key policy that restricts the use of the key based on your access requirements. Refer to this [link](https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html) for information.
 
 ## Support & Feedback
 
