@@ -43,6 +43,11 @@ variable "cache_timout" {
   type        = number
   description = "Cache stale timeout for automated cache refresh in seconds. Default is set to 1 hour (3600 seconds) can be changed to as low as 5 minutes (300 seconds)"
   default     = "3600"
+
+  validation {
+    condition     = var.cache_timout == 0 || (var.cache_timout >= 300 && var.cache_timout <= 2592000)
+    error_message = "Valid Values for Cache Stale Timeout: 0, 300 to 2,592,000 seconds (5 minutes to 30 days)"
+  }
 }
 
 variable "directory_mode" {
@@ -81,5 +86,11 @@ variable "owner_id" {
     )
     error_message = "Valid values: 0 through 4294967294"
   }
+}
+
+variable "tags" {
+  type        = map(any)
+  description = "(Optional) Key-value map of resource tags."
+  default     = {}
 }
 
