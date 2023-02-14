@@ -22,8 +22,6 @@ resource "aws_storagegateway_nfs_file_share" "nfsshare" {
     cache_stale_timeout_in_seconds = var.cache_timout
   }
 
-  tags = {
-    Environment = "dev"
-    Application = "serviceA"
-  }
+  tags = var.tags
+
 }

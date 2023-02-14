@@ -3,7 +3,20 @@
 ################################################################################
 
 locals {
-  create_smb_active_directory_settings = (var.join_smb_domain == true && length(var.domain_controllers) > 0 && length(var.domain_name) > 0 && length(var.domain_password) > 0 && length(var.domain_username) > 0)
+
+  # Check whether all SMB Active Directory Settings are present
+  join_smb_domain_true     = var.join_smb_domain == true
+  domain_controllers_exist = length(var.domain_controllers) > 0
+  domain_name_exists       = length(var.domain_name) > 0
+  domain_password_exists   = length(var.domain_password) > 0
+  domain_username_exists   = length(var.domain_username) > 0
+
+  create_smb_active_directory_settings = (local.join_smb_domain_true &&
+    local.domain_controllers_exist &&
+    local.domain_name_exists &&
+    local.domain_password_exists &&
+  local.domain_username_exists)
+
 }
 
 resource "aws_storagegateway_gateway" "mysgw" {
