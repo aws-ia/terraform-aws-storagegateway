@@ -17,8 +17,6 @@ resource "aws_storagegateway_smb_file_share" "smbshare" {
     cache_stale_timeout_in_seconds = var.cache_timout
   }
 
-  tags = {
-    Environment = "dev"
-    Application = "serviceA"
-  }
+  tags = var.tags
+
 }

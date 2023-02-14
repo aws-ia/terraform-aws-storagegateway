@@ -45,3 +45,9 @@ variable "cache_timout" {
   description = "Cache stale timeout for automated cache refresh in seconds. Default is set to 1 hour (3600 seconds) can be changed to as low as 5 minutes (300 seconds)"
   default     = "3600"
 }
+
+variable "tags" {
+  type        = map(any)
+  description = "(Optional) Key-value map of resource tags."
+  default     = {}
+}
