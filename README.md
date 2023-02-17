@@ -14,7 +14,7 @@ The module requires a Gateway type to be declared. The default is configured to 
 
 ## Usage with VMware S3 File Gateway module
 
-Link to the example : [s3filegateway-vmware](examples/s3filegateway-vmware)
+- Link to the S3 SMB Storage Gateway example for VMware: [s3filegateway-vmware](examples/s3filegateway-vmware)
 
 ### Prerequisists
 
@@ -63,6 +63,7 @@ module "sgw" {
   source             = "aws-ia/storagegateway/aws//modules/aws-sgw"
   name               = "my-sgw"
   gateway_ip_address = module.vsphere.vm_ip
+  join_smb_domain    = true
   domain_name        = var.domain_name
   domain_username    = var.domain_username
   domain_password    = var.domain_password
@@ -72,10 +73,26 @@ module "sgw" {
 
 ```
 
-## Setting up S3 buckets and SMB File Share
+Note that variable "join\_smb\_domain" is set to true by default and therefore optional. To create a Storage Gateway that is not joined to the domain set "join\_smb\_domain" to false.
+
+Example :
 
 ```hcl
+module "sgw" {
+  source             = "aws-ia/storagegateway/aws//modules/aws-sgw"
+  name               = "my-sgw"
+  gateway_ip_address = module.vsphere.vm_ip
+  join_smb_domain    = false
+  gateway_type       = "FILE_S3"       
+}
 
+```
+
+Refer to to the S3 NFS Storage Gateway example for VMware for an end to end example: [s3-nfs-filegateway-vmware](examples/s3-nfs-filegateway-vmware)
+
+## Setting up S3 buckets for S3 File Gateway
+
+```hcl
 module "s3_bucket" {
   source                   = "terraform-aws-modules/s3-bucket/aws"
   version                  = ">=3.5.0"
@@ -104,10 +121,12 @@ module "s3_bucket" {
     enabled = false
   }
 }
+```
+Note that versioning is set to false by default for the S3 bucket for the file share for Storage Gateway. Enabling S3 Versioning can increase storage costs within Amazon S3. Please see [here](https://docs.aws.amazon.com/filegateway/latest/files3/CreatingAnSMBFileShare.html) for further information on whether S3 Versioning is right for your workload.
 
-#######################################
-# Create SMB File share
-#######################################
+## Setting up SMB File shares
+
+```hcl
 module "smb_share" {
   source        = "aws-ia/storagegateway/aws//modules/s3-smb-share"
   share_name    = "smb_share_name"
@@ -116,12 +135,23 @@ module "smb_share" {
   role_arn      = "iam-role-for-sgw-s3"
   log_group_arn = "log-group-arn"
 }
-
 ```
 
-Note that versioning is set to false by default for the S3 bucket for the SMB file share. Enabling S3 Versioning can increase storage costs within Amazon S3. Please see [here](https://docs.aws.amazon.com/filegateway/latest/files3/CreatingAnSMBFileShare.html) for further information on whether S3 Versioning is right for your workload.
+## Setting up NFS File shares
 
-The example also includes "aws\_kms\_key" resource block to create a KMS key. For production deployments, you should pass in a key policy that restricts the use of the key based on your access requirements. Refer to this [link](https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html) for information.
+```hcl
+module "nfs_share" {
+  source        = "aws-ia/storagegateway/aws//modules/s3-nfs-share"
+  share_name    = "nfs_share_name"
+  gateway_arn   = module.sgw.storage_gateway.arn
+  bucket_arn    = module.s3_bucket.s3_bucket_arn
+  role_arn      = "iam-role-for-sgw-s3"
+  log_group_arn = "log-group-arn"
+  client_list   = ["10.0.0.0/24","10.0.1.0/24"]
+}
+```
+
+The examples also includes "aws\_kms\_key" resource block to create a KMS key. For production deployments, you should pass in a key policy that restricts the use of the key based on your access requirements. Refer to this [link](https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html) for information.
 
 ## Support & Feedback
 
@@ -161,14 +191,17 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | Domain name | `string` | n/a | yes |
-| <a name="input_domain_password"></a> [domain\_password](#input\_domain\_password) | The password for the service account on your self-managed AD domain that SGW will use to join to your AD domain | `string` | n/a | yes |
-| <a name="input_domain_username"></a> [domain\_username](#input\_domain\_username) | The user name for the service account on your self-managed AD domain that SGW use to join to your AD domain | `string` | n/a | yes |
 | <a name="input_gateway_ip_address"></a> [gateway\_ip\_address](#input\_gateway\_ip\_address) | IP Address of the SGW appliance in vSphere | `string` | n/a | yes |
 | <a name="input_gateway_name"></a> [gateway\_name](#input\_gateway\_name) | Storage Gateway Name | `string` | n/a | yes |
 | <a name="input_disk_path"></a> [disk\_path](#input\_disk\_path) | Path on the SGW appliance in vsphere where the cache disk resides on the OS | `string` | `"/dev/sdb"` | no |
-| <a name="input_domain_controllers"></a> [domain\_controllers](#input\_domain\_controllers) | Comma separated list of domain controllers. | `list(any)` | `[]` | no |
+| <a name="input_domain_controllers"></a> [domain\_controllers](#input\_domain\_controllers) | List of IPv4 addresses, NetBIOS names, or host names of your domain server. If you need to specify the port number include it after the colon (“:”). For example, mydc.mydomain.com:389. | `list(any)` | `[]` | no |
+| <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | The name of the domain that you want the gateway to join | `string` | `""` | no |
+| <a name="input_domain_password"></a> [domain\_password](#input\_domain\_password) | The password for the service account on your self-managed AD domain that SGW will use to join to your AD domain | `string` | `""` | no |
+| <a name="input_domain_username"></a> [domain\_username](#input\_domain\_username) | The user name for the service account on your self-managed AD domain that SGW use to join to your AD domain | `string` | `""` | no |
 | <a name="input_gateway_type"></a> [gateway\_type](#input\_gateway\_type) | Type of the gateway. Valid options are FILE\_S3, FILE\_FSX\_SMB, VTL, CACHED, STORED | `string` | `"FILE_S3"` | no |
+| <a name="input_join_smb_domain"></a> [join\_smb\_domain](#input\_join\_smb\_domain) | Setting for controlling whether to join the Storage gateway to an Active Directory (AD) domain for Server Message Block (SMB) file shares. Variables domain\_controllers, domain\_name, password and username should also be specified to join AD domain. | `bool` | `true` | no |
+| <a name="input_organizational_unit"></a> [organizational\_unit](#input\_organizational\_unit) | The organizational unit (OU) is a container in an Active Directory that can hold users, groups, computers, and other OUs and this parameter specifies the OU that the gateway will join within the AD domain. | `string` | `""` | no |
+| <a name="input_timeout_in_seconds"></a> [timeout\_in\_seconds](#input\_timeout\_in\_seconds) | Specifies the time in seconds, in which the JoinDomain operation must complete. The default is 20 seconds. | `number` | `-1` | no |
 | <a name="input_timezone"></a> [timezone](#input\_timezone) | Time zone for the gateway. The time zone is of the format GMT, GMT-hr:mm, or GMT+hr:mm.For example, GMT-4:00 indicates the time is 4 hours behind GMT. Avoid prefixing with 0 | `string` | `"GMT"` | no |
 
 ## Outputs

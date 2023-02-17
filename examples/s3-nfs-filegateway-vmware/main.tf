@@ -20,11 +20,7 @@ module "sgw" {
   source             = "../../modules/aws-sgw"
   gateway_name       = random_pet.name.id
   gateway_ip_address = module.vsphere.vm_ip
-  join_smb_domain    = true
-  domain_name        = var.domain_name
-  domain_username    = var.domain_username
-  domain_password    = var.domain_password
-  domain_controllers = var.domain_controllers
+  join_smb_domain    = false
   gateway_type       = "FILE_S3"
 }
 
@@ -78,16 +74,17 @@ module "s3_bucket" {
 }
 
 #######################################
-# Create SMB File share
+# Create NFS File share
 #######################################
 
-module "smb_share" {
-  source        = "../../modules/s3-smb-share"
+module "nfs_share" {
+  source        = "../../modules/s3-nfs-share"
   share_name    = "${local.share_name}-fs"
   gateway_arn   = module.sgw.storage_gateway.arn
   bucket_arn    = module.s3_bucket.s3_bucket_arn
   role_arn      = aws_iam_role.sgw.arn
   log_group_arn = aws_cloudwatch_log_group.smbshare.arn
+  client_list   = var.client_list
 }
 
 #######################################################################
