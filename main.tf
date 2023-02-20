@@ -7,8 +7,8 @@ locals {
   # Check whether all SMB Active Directory Settings are present
   join_smb_domain_true     = var.join_smb_domain == true
   domain_controllers_exist = length(var.domain_controllers) > 0
-  domain_name_exists       = length(var.domain_name) > 0
   domain_password_exists   = length(var.domain_password) > 0
+  domain_name_exists       = length(var.domain_name) > 0
   domain_username_exists   = length(var.domain_username) > 0
 
   create_smb_active_directory_settings = (local.join_smb_domain_true &&
