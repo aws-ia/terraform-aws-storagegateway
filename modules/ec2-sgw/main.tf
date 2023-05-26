@@ -4,7 +4,7 @@
 
 resource "aws_instance" "ec2-sgw" {
   ami                    = data.aws_ami.sgw-ami.id
-  vpc_security_group_ids = [module.ec2_sg.security_group_id]
+  vpc_security_group_ids = var.create_security_group ? [var.security_group_id] : module.ec2_sg.security_group_id
   subnet_id              = var.subnet_id
   instance_type          = var.instance_type
   key_name               = aws_key_pair.my_key_pair.key_name

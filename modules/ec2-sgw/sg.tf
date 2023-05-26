@@ -1,4 +1,5 @@
 module "ec2_sg" {
+  count  = var.create_security_group ? 1 : 0
   source = "terraform-aws-modules/security-group/aws"
 
   name        = "${var.name}.security-group"

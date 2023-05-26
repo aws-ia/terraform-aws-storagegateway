@@ -20,6 +20,17 @@ variable "vpc_id" {
   description = "The VPC ID of the VPC that the Storage Gateway Security Group will be created in."
 }
 
+variable "security_group_id" {
+  type        = string
+  description = "To optionally provide security group or use the SG module to create one"
+}
+
+variable "create_security_group" {
+  type        = bool
+  description = "toggle on/off the security group"
+  default     = true
+}
+
 variable "ingress_cidr_blocks" {
   type        = string
   description = "The CIDR blocks to allow ingress into your File Gateway instance. NOTE: Not allowing 0.0.0.0/0 during initial File Gateway creation will cause issues."
@@ -32,16 +43,20 @@ variable "instance_type" {
   description = "The instance type to use for the Storage Gateway instance."
 }
 
-variable "gateway_timezone" {
-  default     = "GMT"
+variable "timezone" {
   type        = string
-  description = "The Timezone of the File Gateway."
+  description = "Time zone for the gateway. The time zone is of the format GMT, GMT-hr:mm, or GMT+hr:mm.For example, GMT-4:00 indicates the time is 4 hours behind GMT. Avoid prefixing with 0"
+  default     = "GMT"
+  validation {
+    condition     = can(regex("^GMT[+-](([1-9]|1[0-2]):([0-5][0-9]))|GMT$", var.timezone))
+    error_message = "Time zone for the gateway. The time zone is of the format GMT, GMT-hr:mm, or GMT+hr:mm."
+  }
 }
 
 variable "ssh_key_name" {
   type        = string
   description = "SSH keypair for EC2"
-  default     = "keyname"
+  default     = "surampa"
 }
 
 variable "root_disk_size" {
