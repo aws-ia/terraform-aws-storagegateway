@@ -22,12 +22,13 @@ variable "vpc_id" {
 
 variable "security_group_id" {
   type        = string
-  description = "To optionally provide security group or use the SG module to create one"
+  description = "Optionally provide an existing Security Group ID to associate with EC2 Storage Gateway appliance. Variable create_security_group should be set to false to use exsiting Security Group."
+  default = ""
 }
 
 variable "create_security_group" {
   type        = bool
-  description = "toggle on/off the security group"
+  description = "Create a Security Group for the EC2 Storage Gateway appliance. If create_security_group=false, provide a valid security_group_id"
   default     = true
 }
 

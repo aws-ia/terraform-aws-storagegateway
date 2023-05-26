@@ -18,6 +18,14 @@ resource "aws_instance" "ec2-sgw" {
   tags = {
     Name = var.name
   }
+
+  lifecycle {
+    # the Security group ID must be non-empty or create_security_group must be true
+    precondition {
+      condition     = var.create_security_group || (length(var.security_group_id) > 3 && substr(var.security_group_id, 0, 3) == "sg-")
+      error_message = "Please specify create_security_group = true or provide a valid Security Group ID for var.security_group_id"
+    }
+  }
 }
 
 data "aws_ami" "sgw-ami" {
