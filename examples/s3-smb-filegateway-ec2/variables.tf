@@ -1,8 +1,14 @@
 variable "region" {
   type        = string
   description = "The name of the region you wish to deploy into"
-  default     = "us-east-1"
+  default     = ""
 }
+
+# variable "availability_zone" {
+#   type        = string
+#   description = "Availability zone for the Gateway Ec2 Instance."
+#   default     = ""
+# }
 
 variable "domain_name" {
   type        = string
@@ -35,18 +41,8 @@ variable "allow_unverified_ssl" {
   default     = false
 }
 
-variable "subnet_id" {
-  type        = string
-  description = "The ID of the Subnet which the EC2 Instance will be launched into."
-}
-
-variable "vpc_id" {
-  type        = string
-  description = "The VPC ID of the VPC that the Storage Gateway Security Group will be created in."
-}
-
-variable "ingress_cidr_blocks" {
-  type        = list(any)
-  description = "The CIDR blocks to allow ingress into your File Gateway instance. NOTE: Not allowing 0.0.0.0/0 during initial File Gateway creation will cause issues."
-  sensitive   = true
+variable "subnet-count" {
+  type        = number
+  description = "Number of sunbets per type"
+  default     = 1
 }
