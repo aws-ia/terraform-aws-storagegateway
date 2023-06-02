@@ -3,12 +3,14 @@
 ##########################
 
 resource "aws_instance" "ec2-sgw" {
-  ami                    = data.aws_ami.sgw-ami.id
-  vpc_security_group_ids = var.create_security_group ? [var.security_group_id] : module.ec2_sg.security_group_id
+  ami = data.aws_ami.sgw-ami.id
+  #vpc_security_group_ids = var.create_security_group ? [module.ec2_sg[0].security_group_id] : [var.security_group_id]
+  vpc_security_group_ids = var.create_security_group ? [aws_security_group.ec2_sg[0].id] : [var.security_group_id]
   subnet_id              = var.subnet_id
   instance_type          = var.instance_type
   key_name               = aws_key_pair.my_key_pair.key_name
   ebs_optimized          = true
+  availability_zone      = var.availability_zone
 
   root_block_device {
     encrypted   = true
@@ -56,6 +58,7 @@ resource "aws_volume_attachment" "ebs_volume" {
 
 resource "aws_ebs_volume" "cache-disk" {
   availability_zone = aws_instance.ec2-sgw.availability_zone
-  size              = var.cache_disk_size
+  size              = var.cache_size
   type              = "gp3"
+  encrypted         = true
 }

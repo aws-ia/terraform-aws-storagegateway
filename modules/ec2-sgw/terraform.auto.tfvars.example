@@ -1,0 +1,21 @@
+# ## VPC ID
+# vpc_id = "vpc-0167a5f0e947be976"
+
+# ## Subnet ID
+# subnet_id = "subnet-02b57e0ed89b7ed1d"
+
+## Security Group ID : Provide a valid security_group_id if create_security_group is set to false
+#security_group_id = "sg-123456abcd"
+
+## ingress_cidr_blocks : VPC CIDR
+ingress_cidr_blocks = ["10.0.0.0/24","10.0.1.0/24"]
+
+## ingress_cidr_blocks_activation : Only needed for activation purposes
+ingress_cidr_blocks_activation = ["0.0.0.0/0"]
+
+## EC2 Region 
+aws_region = "us-east-1"
+
+
+
+

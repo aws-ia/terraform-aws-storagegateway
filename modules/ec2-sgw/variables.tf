@@ -1,7 +1,13 @@
 variable "aws_region" {
   type        = string
   description = "Region for AWS Resources"
-  default     = "us-east-1"
+  default     = ""
+}
+
+variable "availability_zone" {
+  type        = string
+  description = "Availability zone for the Gateway Ec2 Instance."
+  default     = ""
 }
 
 variable "name" {
@@ -23,7 +29,7 @@ variable "vpc_id" {
 variable "security_group_id" {
   type        = string
   description = "Optionally provide an existing Security Group ID to associate with EC2 Storage Gateway appliance. Variable create_security_group should be set to false to use exsiting Security Group."
-  default = ""
+  default     = ""
 }
 
 variable "create_security_group" {
@@ -33,15 +39,21 @@ variable "create_security_group" {
 }
 
 variable "ingress_cidr_blocks" {
-  type        = string
-  description = "The CIDR blocks to allow ingress into your File Gateway instance. NOTE: Not allowing 0.0.0.0/0 during initial File Gateway creation will cause issues."
-  default     = "172.16.0.0/16"
+  type        = list(string)
+  description = "The CIDR blocks to allow ingress into your File Gateway instance for NFS and SMB client access."
+  default     = []
+}
+
+variable "ingress_cidr_block_activation" {
+  type        = list(string)
+  description = "The CIDR block to allow ingress port 80 into your File Gateway instance for activation."
+  default     = ["0.0.0.0/0"]
 }
 
 variable "instance_type" {
-  default     = "m4.xlarge"
+  default     = "m5.xlarge"
   type        = string
-  description = "The instance type to use for the Storage Gateway instance."
+  description = "The instance type to use for the Storage Gateway. Insatnce types supported are m5.xlarge is the minimum required for a small deployment. For a medium or a large deployment use m5.2xlarge or m5.4xlarge"
 }
 
 variable "timezone" {
@@ -66,7 +78,7 @@ variable "root_disk_size" {
   default     = 80
 }
 
-variable "cache_disk_size" {
+variable "cache_size" {
   type        = number
   description = "The size of the drive in GiBs"
   default     = 150
