@@ -69,7 +69,7 @@ variable "timezone" {
 variable "ssh_key_name" {
   type        = string
   description = "SSH keypair for EC2"
-  default     = "surampa"
+  default     = "id_rsa"
 }
 
 variable "root_disk_size" {
