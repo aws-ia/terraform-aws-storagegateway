@@ -1,8 +1,20 @@
-variable "region" {
+variable "name" {
+  default     = "aws-storage-gateway"
   type        = string
-  description = "The name of the region you wish to deploy into"
-  default     = "us-east-1"
+  description = "Name of the storage gateway instance that will be created in EC2"
 }
+
+variable "aws_region" {
+  type        = string
+  description = "Region for AWS Resources"
+  default     = ""
+}
+
+# variable "availability_zone" {
+#   type        = string
+#   description = "Availability zone for the Gateway Ec2 Instance."
+#   default     = ""
+# }
 
 variable "allow_unverified_ssl" {
   type        = bool
@@ -10,24 +22,20 @@ variable "allow_unverified_ssl" {
   default     = false
 }
 
-variable "subnet_id" {
-  type        = string
-  description = "The ID of the Subnet which the EC2 Instance will be launched into."
-}
-
-variable "vpc_id" {
-  type        = string
-  description = "The VPC ID of the VPC that the Storage Gateway Security Group will be created in."
-}
-
-variable "ingress_cidr_blocks" {
-  type        = list(any)
-  description = "The CIDR blocks to allow ingress into your File Gateway instance. NOTE: Not allowing 0.0.0.0/0 during initial File Gateway creation will cause issues."
-  sensitive   = true
+variable  "vpc_cidr_block" {
+ type = string
+ description = "VPC CIDR blocks"
+ default = ""
 }
 
 variable "client_list" {
   type        = list(any)
   sensitive   = true
   description = "The list of clients that are allowed to access the file gateway. The list must contain either valid IP addresses or valid CIDR blocks. Minimum 1 item. Maximum 100 items."
+}
+
+variable "subnet-count" {
+  type        = number
+  description = "Number of sunbets per type"
+  default     = 1
 }
