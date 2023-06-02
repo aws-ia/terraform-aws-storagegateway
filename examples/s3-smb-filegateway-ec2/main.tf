@@ -20,7 +20,7 @@ module "sgw" {
   source             = "../../modules/aws-sgw"
   gateway_name       = random_pet.name.id
   gateway_ip_address = module.ec2.public_ip
-  join_smb_domain    = false
+  join_smb_domain    = true
   gateway_type       = "FILE_S3"
 }
 
@@ -29,10 +29,31 @@ module "sgw" {
 #######################################
 
 module "ec2" {
-  source    = "../../modules/ec2-sgw"
-  vpc_id    = var.vpc_id
-  subnet_id = var.subnet_id
-  name      = "${random_pet.name.id}-gateway"
+  source            = "../../modules/ec2-sgw"
+  vpc_id            = module.vpc.vpc_id
+  subnet_id         = module.vpc.public_subnets[0]
+  name              = "${random_pet.name.id}-gateway"
+  availability_zone = "${data.aws_availability_zones.available.names[0]}"
+
+}
+
+#############################
+# Create VPC and Subnets 
+#############################
+
+data "aws_availability_zones" "available" {}
+
+module "vpc" {
+  source          = "terraform-aws-modules/vpc/aws"
+
+  cidr            = var.ingress_cidr_blocks
+  azs             = slice(data.aws_availability_zones.available.names, 0, (var.subnet-count))
+  private_subnets = [for subnet in range(var.subnet-count) : cidrsubnet(var.ingress_cidr_blocks, 8, subnet)] # For Private subnets
+  public_subnets  = [for subnet in range(var.subnet-count) : cidrsubnet(var.ingress_cidr_blocks, 8, sum([subnet, var.subnet-count]))]
+  name            = "${random_pet.name.id}-gateway-vpc"
+
+  enable_dns_hostnames    = true
+
 }
 
 #######################################
