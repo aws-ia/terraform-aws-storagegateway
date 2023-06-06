@@ -5,7 +5,7 @@
 resource "aws_instance" "ec2-sgw" {
   ami = data.aws_ami.sgw-ami.id
   #vpc_security_group_ids = var.create_security_group ? [module.ec2_sg[0].security_group_id] : [var.security_group_id]
-  vpc_security_group_ids = var.create_security_group ? [aws_security_group.ec2_sg[0].id] : [var.security_group_id]
+  vpc_security_group_ids = var.create_security_group ? [aws_security_group.ec2_sg["ec2_sg"].id] : [var.security_group_id]
   subnet_id              = var.subnet_id
   instance_type          = var.instance_type
   key_name               = aws_key_pair.my_key_pair.key_name
@@ -61,4 +61,21 @@ resource "aws_ebs_volume" "cache-disk" {
   size              = var.cache_size
   type              = "gp3"
   encrypted         = true
+}
+
+##########################
+## Create VPC Endpoint
+##########################
+resource "aws_vpc_endpoint" "ec2" {
+  vpc_id            = var.vpc_id
+  service_name      = "com.amazonaws.${var.aws_region}.storagegateway"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [
+    var.create_security_group ? aws_security_group.ec2_sg["ec2_sg"].id : var.security_group_id
+  ]
+
+  subnet_ids = [ var.subnet_id ]
+
+  private_dns_enabled = true
 }

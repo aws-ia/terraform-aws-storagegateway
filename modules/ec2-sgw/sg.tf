@@ -1,5 +1,8 @@
 resource "aws_security_group" "ec2_sg" {
-  count       = var.create_security_group ? 1 : 0
+  
+  #count       = var.create_security_group ? 1 : 0
+  for_each = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  
   name        = "${var.name}.security-group"
   description = "Security group with custom ports open within VPC for client connectivity and communication with AWS."
   vpc_id      = var.vpc_id
