@@ -1,7 +1,13 @@
-variable "region" {
+variable "aws_region" {
   type        = string
   description = "The name of the region you wish to deploy into"
   default     = ""
+}
+
+variable "ingress_cidr_blocks" {
+  type        = list(string)
+  description = "The CIDR blocks to allow ingress into your File Gateway instance for NFS and SMB client access."
+  default     = []
 }
 
 # variable "availability_zone" {
