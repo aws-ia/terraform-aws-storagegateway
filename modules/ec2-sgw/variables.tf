@@ -38,6 +38,12 @@ variable "create_security_group" {
   default     = true
 }
 
+variable "create_vpc_endpoint" {
+  type        = bool
+  description = "Create an Interface VPC endpoint for the EC2 Storage Gateway"
+  default     = true
+}
+
 variable "ingress_cidr_blocks" {
   type        = list(string)
   description = "The CIDR blocks to allow ingress into your File Gateway instance for NFS and SMB client access."

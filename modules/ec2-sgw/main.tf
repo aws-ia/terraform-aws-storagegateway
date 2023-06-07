@@ -66,7 +66,10 @@ resource "aws_ebs_volume" "cache-disk" {
 ##########################
 ## Create VPC Endpoint
 ##########################
-resource "aws_vpc_endpoint" "ec2" {
+resource "aws_vpc_endpoint" "ec2_vpce" {
+
+  for_each = var.create_vpc_endpoint == true ? toset(["ec2_vpce"]) : toset([])
+
   vpc_id            = var.vpc_id
   service_name      = "com.amazonaws.${var.aws_region}.storagegateway"
   vpc_endpoint_type = "Interface"
