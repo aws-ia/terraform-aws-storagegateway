@@ -1,7 +1,7 @@
 # Security group for VPC Endpoint
 resource "aws_security_group" "vpce_sg" {
 
-  for_each = var.create_vpc_endpoint_security_group == true ? toset(["vpce_sg"]) : toset([])
+  for_each = (var.create_vpc_endpoint && var.create_vpc_endpoint_security_group) ? toset(["vpce_sg"]) : toset([])
 
   description = "Security group with custom ports open Storage Gateway VPC Endpoint connectivity"
   vpc_id      = var.vpc_id
