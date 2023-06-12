@@ -88,7 +88,7 @@ variable "domain_controllers" {
 variable "create_vpc_endpoint" {
   type        = bool
   description = "Create an Interface VPC endpoint for the EC2 Storage Gateway"
-  default     = true
+  default     = false
 }
 
 variable "vpc_id" {
