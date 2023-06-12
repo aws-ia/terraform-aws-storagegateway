@@ -62,23 +62,3 @@ resource "aws_ebs_volume" "cache-disk" {
   type              = "gp3"
   encrypted         = true
 }
-
-##########################
-## Create VPC Endpoint
-##########################
-resource "aws_vpc_endpoint" "ec2_vpce" {
-
-  for_each = var.create_vpc_endpoint == true ? toset(["ec2_vpce"]) : toset([])
-
-  vpc_id            = var.vpc_id
-  service_name      = "com.amazonaws.${var.aws_region}.storagegateway"
-  vpc_endpoint_type = "Interface"
-
-  security_group_ids = [
-    var.create_security_group ? aws_security_group.ec2_sg["ec2_sg"].id : var.security_group_id
-  ]
-
-  subnet_ids = [ var.subnet_id ]
-
-  private_dns_enabled = true
-}

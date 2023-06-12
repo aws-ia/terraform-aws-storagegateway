@@ -52,4 +52,32 @@ data "aws_storagegateway_local_disk" "sgw" {
   disk_node   = var.disk_path
 }
 
+##########################
+## Create VPC Endpoint
+##########################
+
+data "aws_region" "current" {}
+
+resource "aws_vpc_endpoint" "sgw_vpce" {
+
+  for_each = var.create_vpc_endpoint ? toset(["sgw_vpce"]) : toset([])
+
+  vpc_id            = var.vpc_id
+  service_name      = "com.amazonaws.${data.aws_region.current.name}.storagegateway"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [
+    var.create_vpc_endpoint_security_group ? aws_security_group.vpce_sg["vpce_sg"].id : var.vpc_endpoint_security_group_id
+  ]
+
+  subnet_ids = var.vpc_endpoint_subnet_ids
+
+  private_dns_enabled = var.vpc_endpoint_private_dns_enabled
+
+  tags = {
+    Name = "storage-gateway-endpoint"
+  }
+
+}
+
 
