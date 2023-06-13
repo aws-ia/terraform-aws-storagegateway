@@ -25,6 +25,7 @@ module "sgw" {
   create_vpc_endpoint     = true
   vpc_id                  = module.vpc.vpc_id
   vpc_endpoint_subnet_ids = module.vpc.private_subnets
+  gateway_private_ip_address = module.ec2-sgw.private_ip
 }
 
 #######################################
