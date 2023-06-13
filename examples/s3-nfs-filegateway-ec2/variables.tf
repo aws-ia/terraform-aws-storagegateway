@@ -22,10 +22,10 @@ variable "allow_unverified_ssl" {
   default     = false
 }
 
-variable  "vpc_cidr_block" {
- type = string
- description = "VPC CIDR blocks"
- default = ""
+variable "vpc_cidr_block" {
+  type        = string
+  description = "VPC CIDR blocks"
+  default     = ""
 }
 
 variable "client_list" {
