@@ -93,36 +93,36 @@ variable "create_vpc_endpoint" {
 
 variable "vpc_id" {
   type        = string
-  description = "VPC id for creating a VPC endpoint"
+  description = "VPC id for creating a VPC endpoint. Must be set if create_vpc_endpoint=true."
   default     = ""
 }
 
 variable "vpc_endpoint_subnet_ids" {
   type        = list(string)
-  description = "Provide an existing subnet IDs to associate with the VPC Endpoint. By default all subnets will be used."
+  description = "Provide existing subnet IDs to associate with the VPC Endpoint. Must be set if create_vpc_endpoint=true."
   default     = []
 }
 
 variable "create_vpc_endpoint_security_group" {
   type        = bool
-  description = "Create a Security Group for the VPC Endpoint for EC2 Storage Gateway appliance. If create_security_group=false, provide a valid vpc_endpoint_security_group_id"
+  description = "Create a Security Group for the VPC Endpoint for EC2 Storage Gateway appliance."
   default     = true
 }
 
 variable "vpc_endpoint_security_group_id" {
   type        = string
-  description = "Optionally provide an existing Security Group ID to associate with the VPC Endpoint. Variable create_vpc_endpoint_security_group should be set to false to use exsiting Security Group."
+  description = "Optionally provide an existing Security Group ID to associate with the VPC Endpoint. Must be set if create_vpc_endpoint_security_group=false"
   default     = ""
 }
 
-variable "ingress_cidr_block_activation" {
-  type        = list(string)
-  description = "The CIDR block to allow ingress port 80 into your File Gateway instance for activation."
-  default     = ["0.0.0.0/0"]
+variable "gateway_private_ip_address" {
+  type        = string
+  description = "Inbound IP address of Gateway VM appliance for Security Group associated with VPC Endpoint. Must be set if create_vpc_endpoint=true"
+  default     = ""
 }
 
 variable "vpc_endpoint_private_dns_enabled" {
   type        = bool
   description = "Enable private DNS for VPC Endpoint"
-  default     = true
+  default     = false
 }

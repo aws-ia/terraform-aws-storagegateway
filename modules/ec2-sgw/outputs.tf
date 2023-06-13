@@ -4,3 +4,9 @@ output "public_ip" {
 }
 
 
+output "private_ip" {
+  value       = aws_instance.ec2-sgw.private_ip
+  description = "The Private IP address of the Storage Gateway EC2 appliance"
+}
+
+

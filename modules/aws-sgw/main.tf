@@ -78,6 +78,14 @@ resource "aws_vpc_endpoint" "sgw_vpce" {
     Name = "storage-gateway-endpoint"
   }
 
+  lifecycle {
+    # VPC Subnet IDs must be non empty
+    precondition {
+      condition     = try(length(var.vpc_endpoint_subnet_ids[0]) > 7, false)
+      error_message = "Variable vpc_endpoint_subnet_ids must contain at least one valid subnet to create VPC Endpoint Security Group"
+    }
+  }
+
 }
 
 
