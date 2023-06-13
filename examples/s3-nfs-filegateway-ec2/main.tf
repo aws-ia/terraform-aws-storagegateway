@@ -16,12 +16,15 @@ locals {
 ######################################
 
 module "sgw" {
-  depends_on         = [module.ec2-sgw]
-  source             = "../../modules/aws-sgw"
-  gateway_name       = random_pet.name.id
-  gateway_ip_address = module.ec2-sgw.public_ip
-  join_smb_domain    = false
-  gateway_type       = "FILE_S3"
+  depends_on              = [module.ec2-sgw]
+  source                  = "../../modules/aws-sgw"
+  gateway_name            = random_pet.name.id
+  gateway_ip_address      = module.ec2-sgw.public_ip
+  join_smb_domain         = false
+  gateway_type            = "FILE_S3"
+  create_vpc_endpoint     = true
+  vpc_id                  = module.vpc.vpc_id
+  vpc_endpoint_subnet_ids = module.vpc.private_subnets
 }
 
 #######################################
@@ -29,11 +32,11 @@ module "sgw" {
 #######################################
 
 module "ec2-sgw" {
-  source = "../../modules/ec2-sgw"
+  source            = "../../modules/ec2-sgw"
   vpc_id            = module.vpc.vpc_id
   subnet_id         = module.vpc.public_subnets[0]
   name              = "${random_pet.name.id}-gateway"
-  availability_zone = "${data.aws_availability_zones.available.names[0]}"
+  availability_zone = data.aws_availability_zones.available.names[0]
 }
 
 #############################
@@ -45,14 +48,14 @@ data "aws_availability_zones" "available" {}
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  cidr            = var.vpc_cidr_block
+  cidr = var.vpc_cidr_block
 
   azs             = slice(data.aws_availability_zones.available.names, 0, (var.subnet-count))
   private_subnets = [for subnet in range(var.subnet-count) : cidrsubnet(var.vpc_cidr_block, 8, subnet)] # For Private subnets
   public_subnets  = [for subnet in range(var.subnet-count) : cidrsubnet(var.vpc_cidr_block, 8, sum([subnet, var.subnet-count]))]
   name            = "${random_pet.name.id}-gateway-vpc"
 
-  enable_dns_hostnames    = true
+  enable_dns_hostnames = true
 
 }
 
@@ -61,8 +64,8 @@ module "vpc" {
 ###################################
 
 resource "aws_vpc_endpoint" "s3" {
-  vpc_id       = module.vpc.vpc_id
-  service_name = "com.amazonaws.${var.aws_region}.s3"
+  vpc_id          = module.vpc.vpc_id
+  service_name    = "com.amazonaws.${var.aws_region}.s3"
   route_table_ids = module.vpc.private_route_table_ids
 }
 
