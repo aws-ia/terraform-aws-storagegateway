@@ -11,7 +11,6 @@ resource "aws_security_group" "vpce_sg" {
     }
   }
 
-
   description = "Security group with custom ports open Storage Gateway VPC Endpoint connectivity"
   vpc_id      = var.vpc_id
 
