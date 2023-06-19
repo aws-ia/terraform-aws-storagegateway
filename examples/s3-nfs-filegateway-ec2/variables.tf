@@ -7,7 +7,7 @@ variable "name" {
 variable "aws_region" {
   type        = string
   description = "Region for AWS Resources"
-  default     = ""
+  # default     = ""
 }
 
 # variable "availability_zone" {
@@ -25,7 +25,7 @@ variable "allow_unverified_ssl" {
 variable "vpc_cidr_block" {
   type        = string
   description = "VPC CIDR blocks"
-  default     = ""
+  # default     = ""
 }
 
 variable "client_list" {

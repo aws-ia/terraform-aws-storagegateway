@@ -16,15 +16,15 @@ locals {
 ######################################
 
 module "sgw" {
-  depends_on              = [module.ec2-sgw]
-  source                  = "../../modules/aws-sgw"
-  gateway_name            = random_pet.name.id
-  gateway_ip_address      = module.ec2-sgw.public_ip
-  join_smb_domain         = false
-  gateway_type            = "FILE_S3"
-  create_vpc_endpoint     = true
-  vpc_id                  = module.vpc.vpc_id
-  vpc_endpoint_subnet_ids = module.vpc.private_subnets
+  depends_on                 = [module.ec2-sgw]
+  source                     = "../../modules/aws-sgw"
+  gateway_name               = random_pet.name.id
+  gateway_ip_address         = module.ec2-sgw.public_ip
+  join_smb_domain            = false
+  gateway_type               = "FILE_S3"
+  create_vpc_endpoint        = true
+  vpc_id                     = module.vpc.vpc_id
+  vpc_endpoint_subnet_ids    = module.vpc.private_subnets
   gateway_private_ip_address = module.ec2-sgw.private_ip
 }
 
@@ -38,6 +38,7 @@ module "ec2-sgw" {
   subnet_id         = module.vpc.public_subnets[0]
   name              = "${random_pet.name.id}-gateway"
   availability_zone = data.aws_availability_zones.available.names[0]
+  aws_region        = var.aws_region
 }
 
 #############################
