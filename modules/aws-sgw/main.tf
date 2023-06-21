@@ -70,7 +70,7 @@ resource "aws_vpc_endpoint" "sgw_vpce" {
     var.create_vpc_endpoint_security_group ? aws_security_group.vpce_sg["vpce_sg"].id : var.vpc_endpoint_security_group_id
   ]
 
-  subnet_ids = var.vpc_endpoint_subnet_ids
+  subnet_ids = split(",",var.vpc_endpoint_subnet_ids)
 
   private_dns_enabled = var.vpc_endpoint_private_dns_enabled
 

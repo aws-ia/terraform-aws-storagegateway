@@ -42,7 +42,6 @@ data "aws_ami" "sgw-ami" {
 
 resource "aws_eip" "ip" {
   instance = aws_instance.ec2-sgw.id
-  vpc      = true
 }
 
 resource "aws_key_pair" "my_key_pair" {

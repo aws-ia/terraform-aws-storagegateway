@@ -93,20 +93,20 @@ variable "create_vpc_endpoint" {
 
 variable "vpc_id" {
   type        = string
-  description = "VPC id for creating a VPC endpoint. Must be set if create_vpc_endpoint=true."
+  description = "VPC id for creating a VPC endpoint. Must provide a valid value if create_vpc_endpoint=true."
   default     = ""
 }
 
 variable "vpc_endpoint_subnet_ids" {
-  type        = list(string)
-  description = "Provide existing subnet IDs to associate with the VPC Endpoint. Must be set if create_vpc_endpoint=true."
-  default     = []
+  type        = string
+  description = "Provide existing subnet IDs to associate with the VPC Endpoint. If there are multiple subnet IDs, please separate using commas. Must provide a valid value if create_vpc_endpoint=true."
+  default     = ""
 }
 
 variable "create_vpc_endpoint_security_group" {
   type        = bool
   description = "Create a Security Group for the VPC Endpoint for EC2 Storage Gateway appliance."
-  default     = true
+  default     = false
 }
 
 variable "vpc_endpoint_security_group_id" {

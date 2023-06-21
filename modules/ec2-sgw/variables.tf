@@ -39,15 +39,15 @@ variable "create_security_group" {
 }
 
 variable "ingress_cidr_blocks" {
-  type        = list(string)
-  description = "The CIDR blocks to allow ingress into your File Gateway instance for NFS and SMB client access."
-  default     = []
+  type        = string
+  description = "The CIDR blocks to allow ingress into your File Gateway instance for NFS and SMB client access. For multiple CIDR blocks, please separate with comma"
+  default     = ""
 }
 
 variable "ingress_cidr_block_activation" {
-  type        = list(string)
-  description = "The CIDR block to allow ingress port 80 into your File Gateway instance for activation."
-  default     = ["0.0.0.0/0"]
+  type        = string
+  description = "The CIDR block to allow ingress port 80 into your File Gateway instance for activation. For multiple CIDR blocks, please separate with comma"
+  default     = "0.0.0.0/0"
 }
 
 variable "instance_type" {
