@@ -1,3 +1,8 @@
+locals {
+  ingress_cidr_blocks_list = split(",",var.ingress_cidr_blocks)
+  ingress_cidr_block_activation_list = split(",",var.ingress_cidr_block_activation)
+}
+
 resource "aws_security_group" "ec2_sg" {
   
   #count       = var.create_security_group ? 1 : 0
@@ -13,56 +18,56 @@ resource "aws_security_group" "ec2_sg" {
     to_port     = 80
     protocol    = "tcp"
     description = "HTTP required only for activation purposes. The port is closed after activation."
-    cidr_blocks = var.ingress_cidr_block_activation
+    cidr_blocks = local.ingress_cidr_block_activation_list
   }
   ingress {
     from_port   = 2049
     to_port     = 2049
     protocol    = "tcp"
     description = "NFS-TCP"
-    cidr_blocks = var.ingress_cidr_blocks
+    cidr_blocks = local.ingress_cidr_blocks_list
   }
   ingress {
     from_port   = 111
     to_port     = 111
     protocol    = "tcp"
     description = "NFS"
-    cidr_blocks = var.ingress_cidr_blocks
+    cidr_blocks = local.ingress_cidr_blocks_list
   }
   ingress {
     from_port   = 20048
     to_port     = 20048
     protocol    = "tcp"
     description = "NFSv3-TCP"
-    cidr_blocks = var.ingress_cidr_blocks
+    cidr_blocks = local.ingress_cidr_blocks_list
   }
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
     description = "HTTPS"
-    cidr_blocks = var.ingress_cidr_blocks
+    cidr_blocks = local.ingress_cidr_blocks_list
   }
   ingress {
     from_port   = 53
     to_port     = 53
     protocol    = "tcp"
     description = "DNS-TCP"
-    cidr_blocks = var.ingress_cidr_blocks
+    cidr_blocks = local.ingress_cidr_blocks_list
   }
   ingress {
     from_port   = 123
     to_port     = 123
     protocol    = "udp"
     description = "NTP"
-    cidr_blocks = var.ingress_cidr_blocks
+    cidr_blocks = local.ingress_cidr_blocks_list
   }
   ingress {
     from_port   = 445
     to_port     = 445
     protocol    = "tcp"
     description = "SMB"
-    cidr_blocks = var.ingress_cidr_blocks
+    cidr_blocks = local.ingress_cidr_blocks_list
   }
   # ingress {
   #   from_port   = 0

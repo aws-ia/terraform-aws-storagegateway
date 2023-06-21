@@ -117,7 +117,7 @@ module "nfs_share" {
   bucket_arn    = module.s3_bucket.s3_bucket_arn
   role_arn      = aws_iam_role.sgw.arn
   log_group_arn = aws_cloudwatch_log_group.smbshare.arn
-  client_list   = var.client_list
+  client_list   = split(",",var.client_ip_cidrs)
 }
 
 #######################################################################

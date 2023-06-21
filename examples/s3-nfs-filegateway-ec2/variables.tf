@@ -24,14 +24,14 @@ variable "allow_unverified_ssl" {
 
 variable "vpc_cidr_block" {
   type        = string
-  description = "VPC CIDR blocks"
-  # default     = ""
+  description = "VPC CIDR block for the creation of example VPC and subnets"
+  default     =   "10.0.0.0/16"
 }
 
-variable "client_list" {
-  type        = list(any)
+variable "client_ip_cidrs" {
+  type        = string
   sensitive   = true
-  description = "The list of clients that are allowed to access the file gateway. The list must contain either valid IP addresses or valid CIDR blocks. Minimum 1 item. Maximum 100 items."
+  description = "The IP addresses or CIDR block of clients that are allowed to access the file gateway. If there are multiple clients, please separate using commas. The value must contain either valid IP addresses or valid CIDR blocks. Minimum 1 item. Maximum 100 items."
 }
 
 variable "subnet-count" {
