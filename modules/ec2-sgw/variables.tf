@@ -68,8 +68,13 @@ variable "timezone" {
 
 variable "ssh_key_name" {
   type        = string
-  description = "SSH keypair for EC2"
-  default     = "id_rsa"
+  description = "The name of EC2 Key pair for SSH access to the EC2 Storage Gateway appliance"
+  default     = "ec2-sgw-key-pair"
+}
+
+variable "ssh_public_key_path" {
+  type        = string
+  description = "Absolute file path to the the public key for the EC2 Key pair"
 }
 
 variable "root_disk_size" {

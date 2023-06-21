@@ -8,7 +8,7 @@ resource "aws_instance" "ec2-sgw" {
   vpc_security_group_ids = var.create_security_group ? [aws_security_group.ec2_sg["ec2_sg"].id] : [var.security_group_id]
   subnet_id              = var.subnet_id
   instance_type          = var.instance_type
-  key_name               = aws_key_pair.my_key_pair.key_name
+  key_name               = aws_key_pair.ec2_sgw_key_pair.key_name
   ebs_optimized          = true
   availability_zone      = var.availability_zone
 
@@ -44,9 +44,9 @@ resource "aws_eip" "ip" {
   instance = aws_instance.ec2-sgw.id
 }
 
-resource "aws_key_pair" "my_key_pair" {
+resource "aws_key_pair" "ec2_sgw_key_pair" {
   key_name   = var.ssh_key_name
-  public_key = file("${abspath(path.cwd)}/${var.ssh_key_name}.pub")
+  public_key = file(var.ssh_public_key_path)
 }
 
 resource "aws_volume_attachment" "ebs_volume" {
