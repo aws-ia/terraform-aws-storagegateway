@@ -8,7 +8,9 @@ resource "random_pet" "name" {
 }
 
 locals {
-  share_name = "${random_pet.name.id}-${module.sgw.storage_gateway.gateway_id}"
+  share_name          = "${random_pet.name.id}-${module.sgw.storage_gateway.gateway_id}"
+  vpc_private_subnets = split(",", module.vpc.private_subnets) #converting string to list type
+  client_ip_cidrs     = split(",", var.client_ip_cidrs)        #converting string to list type
 }
 
 ######################################
@@ -16,17 +18,17 @@ locals {
 ######################################
 
 module "sgw" {
-  depends_on                 = [module.ec2-sgw]
-  source                     = "../../modules/aws-sgw"
-  gateway_name               = random_pet.name.id
-  gateway_ip_address         = module.ec2-sgw.public_ip
-  join_smb_domain            = false
-  gateway_type               = "FILE_S3"
-  create_vpc_endpoint        = true
-  vpc_id                     = module.vpc.vpc_id
-  vpc_endpoint_subnet_ids    = module.vpc.private_subnets
-  gateway_private_ip_address = module.ec2-sgw.private_ip
-  ssh_public_key_path        = "/home/ec2-user/.ssh/id_rsa"
+  depends_on                         = [module.ec2-sgw]
+  source                             = "../../modules/aws-sgw"
+  gateway_name                       = random_pet.name.id
+  gateway_ip_address                 = module.ec2-sgw.public_ip
+  join_smb_domain                    = false
+  gateway_type                       = "FILE_S3"
+  create_vpc_endpoint                = true
+  create_vpc_endpoint_security_group = true #if false define vpc_endpoint_security_group_id 
+  vpc_id                             = module.vpc.vpc_id
+  vpc_endpoint_subnet_ids            = local.vpc_private_subnets
+  gateway_private_ip_address         = module.ec2-sgw.private_ip
 }
 
 #######################################
@@ -34,12 +36,18 @@ module "sgw" {
 #######################################
 
 module "ec2-sgw" {
-  source            = "../../modules/ec2-sgw"
-  vpc_id            = module.vpc.vpc_id
-  subnet_id         = module.vpc.public_subnets[0]
-  name              = "${random_pet.name.id}-gateway"
-  availability_zone = data.aws_availability_zones.available.names[0]
-  aws_region        = var.aws_region
+  source              = "../../modules/ec2-sgw"
+  vpc_id              = module.vpc.vpc_id
+  subnet_id           = module.vpc.public_subnets[0]
+  name                = "${random_pet.name.id}-gateway"
+  availability_zone   = data.aws_availability_zones.available.names[0]
+  aws_region          = var.aws_region
+  ssh_public_key_path = var.ssh_public_key_path
+
+  #If create security_group = true , define ingress cidr blocks, if not use security_group_id
+  create_security_group         = true
+  ingress_cidr_blocks           = var.ingress_cidr_blocks
+  ingress_cidr_block_activation = var.ingress_cidr_block_activation
 }
 
 #############################
@@ -118,7 +126,7 @@ module "nfs_share" {
   bucket_arn    = module.s3_bucket.s3_bucket_arn
   role_arn      = aws_iam_role.sgw.arn
   log_group_arn = aws_cloudwatch_log_group.smbshare.arn
-  client_list   = split(",",var.client_ip_cidrs)
+  client_list   = local.client_ip_cidrs
 }
 
 #######################################################################
