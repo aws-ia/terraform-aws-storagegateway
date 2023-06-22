@@ -9,7 +9,6 @@ resource "random_pet" "name" {
 
 locals {
   share_name          = "${random_pet.name.id}-${module.sgw.storage_gateway.gateway_id}"
-  vpc_private_subnets = split(",", module.vpc.private_subnets) #converting string to list type
   client_ip_cidrs     = split(",", var.client_ip_cidrs)        #converting string to list type
 }
 
@@ -27,7 +26,7 @@ module "sgw" {
   create_vpc_endpoint                = true
   create_vpc_endpoint_security_group = true #if false define vpc_endpoint_security_group_id 
   vpc_id                             = module.vpc.vpc_id
-  vpc_endpoint_subnet_ids            = local.vpc_private_subnets
+  vpc_endpoint_subnet_ids            = module.vpc.private_subnets
   gateway_private_ip_address         = module.ec2-sgw.private_ip
 }
 
