@@ -98,9 +98,9 @@ variable "vpc_id" {
 }
 
 variable "vpc_endpoint_subnet_ids" {
-  type        = string
-  description = "Provide existing subnet IDs to associate with the VPC Endpoint. If there are multiple subnet IDs, please separate using commas. Must provide a valid value if create_vpc_endpoint=true."
-  default     = ""
+  type        = list(string)
+  description = "Provide existing subnet IDs to associate with the VPC Endpoint. Must provide a valid values if create_vpc_endpoint=true."
+  default     = []
 }
 
 variable "create_vpc_endpoint_security_group" {
