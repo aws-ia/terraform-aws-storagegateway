@@ -35,19 +35,19 @@ variable "security_group_id" {
 variable "create_security_group" {
   type        = bool
   description = "Create a Security Group for the EC2 Storage Gateway appliance. If create_security_group=false, provide a valid security_group_id"
-  default     = true
+  default     = false
 }
 
 variable "ingress_cidr_blocks" {
   type        = string
   description = "The CIDR blocks to allow ingress into your File Gateway instance for NFS and SMB client access. For multiple CIDR blocks, please separate with comma"
-  default     = ""
+  default     = "10.0.0.0/16"
 }
 
 variable "ingress_cidr_block_activation" {
   type        = string
   description = "The CIDR block to allow ingress port 80 into your File Gateway instance for activation. For multiple CIDR blocks, please separate with comma"
-  default     = "0.0.0.0/0"
+  # default     = "0.0.0.0/0"
 }
 
 variable "instance_type" {
