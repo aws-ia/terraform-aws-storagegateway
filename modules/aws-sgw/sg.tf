@@ -44,6 +44,14 @@ resource "aws_security_group" "vpce_sg" {
     cidr_blocks = ["${var.gateway_private_ip_address}/32"]
   }
   ingress {
+    from_port   = 1031
+    to_port     = 1031
+    protocol    = "tcp"
+    description = "VPC Endpoint rule"
+    cidr_blocks = ["${var.gateway_private_ip_address}/32"]
+  }
+
+  ingress {
     from_port   = 2222
     to_port     = 2222
     protocol    = "tcp"

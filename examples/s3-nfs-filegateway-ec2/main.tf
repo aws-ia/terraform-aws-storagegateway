@@ -8,8 +8,8 @@ resource "random_pet" "name" {
 }
 
 locals {
-  share_name          = "${random_pet.name.id}-${module.sgw.storage_gateway.gateway_id}"
-  client_ip_cidrs     = split(",", var.client_ip_cidrs)        #converting string to list type
+  share_name      = "${random_pet.name.id}-${module.sgw.storage_gateway.gateway_id}"
+  client_ip_cidrs = split(",", var.client_ip_cidrs) #converting string to list type
 }
 
 ######################################
@@ -66,6 +66,7 @@ module "vpc" {
   name            = "${random_pet.name.id}-gateway-vpc"
 
   enable_dns_hostnames = true
+  create_igw           = true
 
 }
 
