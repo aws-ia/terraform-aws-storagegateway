@@ -3,8 +3,7 @@
 ##########################
 
 resource "aws_instance" "ec2-sgw" {
-  ami = data.aws_ami.sgw-ami.id
-  #vpc_security_group_ids = var.create_security_group ? [module.ec2_sg[0].security_group_id] : [var.security_group_id]
+  ami                    = data.aws_ami.sgw-ami.id
   vpc_security_group_ids = var.create_security_group ? [aws_security_group.ec2_sg["ec2_sg"].id] : [var.security_group_id]
   subnet_id              = var.subnet_id
   instance_type          = var.instance_type

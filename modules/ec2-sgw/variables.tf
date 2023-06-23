@@ -1,13 +1,11 @@
 variable "aws_region" {
   type        = string
   description = "Region for AWS Resources"
-  # default     = ""
 }
 
 variable "availability_zone" {
   type        = string
   description = "Availability zone for the Gateway Ec2 Instance."
-  # default     = ""
 }
 
 variable "name" {
