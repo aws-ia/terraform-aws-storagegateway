@@ -102,10 +102,13 @@ resource "aws_security_group" "ec2_sg" {
     description = "SMB"
     cidr_blocks = local.ingress_cidr_blocks_list
   }
+  #outbound connections for Storage Gateway for activation
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr 
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
+    description = "Storage Gateway egress traffic for activation"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
