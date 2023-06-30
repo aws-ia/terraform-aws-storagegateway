@@ -75,14 +75,30 @@ variable "ssh_public_key_path" {
   description = "Absolute file path to the the public key for the EC2 Key pair"
 }
 
-variable "root_disk_size" {
-  type        = number
-  description = "The size of the drive in GiBs"
-  default     = 80
+variable "root_block_device" {
+  description = "Customize details about the root block device of the instance. See Block Devices below for details"
+  type = object({
+    kms_key_id  = string
+    disk_size   = number
+    volume_type = string
+  })
+  default = {
+    kms_key_id  = null
+    disk_size   = 80
+    volume_type = "gp3"
+  }
 }
 
-variable "cache_size" {
-  type        = number
-  description = "The size of the drive in GiBs"
-  default     = 150
+variable "cache_block_device" {
+  description = "Customize details about the additional block device of the instance. See Block Devices below for details"
+  type = object({
+    kms_key_id  = string
+    disk_size   = number
+    volume_type = string
+  })
+  default = {
+    kms_key_id  = null
+    disk_size   = 150
+    volume_type = "gp3"
+  }
 }
