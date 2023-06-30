@@ -86,9 +86,9 @@ variable "domain_controllers" {
 # VPC Endpoint related variables
 
 variable "gateway_vpc_endpoint" {
-  type = string
+  type        = string
   description = "Existing VPC endpoint address to be used when activating your gateway. This variable value will be ignored if setting create_vpc_endpoint=true."
-  default = null
+  default     = null
 }
 
 variable "create_vpc_endpoint" {

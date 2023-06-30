@@ -1,3 +1,7 @@
+## EC2 Region and AZ
+aws_region = "us-east-1"
+availability_zone = "us-east-1a"
+
 # ## VPC ID
 # vpc_id = "vpc-0167a5f0e947be976"
 
@@ -8,13 +12,11 @@
 #security_group_id = "sg-123456abcd"
 
 ## ingress_cidr_blocks : VPC CIDR
-ingress_cidr_blocks = "10.0.0.0/24","10.0.1.0/24"
+ingress_cidr_blocks = "10.0.0.0/24,10.0.1.0/24"
 
 ## ingress_cidr_blocks_activation : Only needed for activation purposes
 ingress_cidr_blocks_activation = "0.0.0.0/0"
 
-## EC2 Region 
-aws_region = "us-east-1"
 
 
 
