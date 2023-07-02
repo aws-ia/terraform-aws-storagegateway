@@ -27,7 +27,7 @@ variable "vpc_id" {
 variable "security_group_id" {
   type        = string
   description = "Optionally provide an existing Security Group ID to associate with EC2 Storage Gateway appliance. Variable create_security_group should be set to false to use exsiting Security Group."
-  default     = ""
+  default     = null
 }
 
 variable "create_security_group" {
@@ -45,7 +45,6 @@ variable "ingress_cidr_blocks" {
 variable "ingress_cidr_block_activation" {
   type        = string
   description = "The CIDR block to allow ingress port 80 into your File Gateway instance for activation. For multiple CIDR blocks, please separate with comma"
-  # default     = "0.0.0.0/0"
 }
 
 variable "instance_type" {
@@ -77,11 +76,7 @@ variable "ssh_public_key_path" {
 
 variable "root_block_device" {
   description = "Customize details about the root block device of the instance. See Block Devices below for details"
-  type = object({
-    kms_key_id  = string
-    disk_size   = number
-    volume_type = string
-  })
+  type        = map(any)
   default = {
     kms_key_id  = null
     disk_size   = 80
@@ -91,11 +86,7 @@ variable "root_block_device" {
 
 variable "cache_block_device" {
   description = "Customize details about the additional block device of the instance. See Block Devices below for details"
-  type = object({
-    kms_key_id  = string
-    disk_size   = number
-    volume_type = string
-  })
+  type        = map(any)
   default = {
     kms_key_id  = null
     disk_size   = 150

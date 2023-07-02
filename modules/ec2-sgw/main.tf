@@ -12,11 +12,10 @@ resource "aws_instance" "ec2-sgw" {
   availability_zone      = var.availability_zone
 
   root_block_device {
-    encrypted = true
-    volume_size = var.root_block_device["disk_size"]
-    volume_type = var.root_block_device["volume_type"]
-    kms_key_id  = var.root_block_device["kms_key_id"]
-
+    encrypted   = true
+    volume_size = try(tonumber(var.root_block_device["disk_size"]), 80)
+    volume_type = try(var.root_block_device["volume_type"], "gp3")
+    kms_key_id  = try(var.root_block_device["kms_key_id"], null)
   }
   tags = {
     Name = var.name
@@ -25,7 +24,7 @@ resource "aws_instance" "ec2-sgw" {
   lifecycle {
     # the Security group ID must be non-empty or create_security_group must be true
     precondition {
-      condition     = var.create_security_group || (length(var.security_group_id) > 3 && substr(var.security_group_id, 0, 3) == "sg-")
+      condition     = var.create_security_group || try((length(var.security_group_id) > 3 && substr(var.security_group_id, 0, 3) == "sg-"),false)
       error_message = "Please specify create_security_group = true or provide a valid Security Group ID for var.security_group_id"
     }
   }
@@ -58,8 +57,8 @@ resource "aws_volume_attachment" "ebs_volume" {
 
 resource "aws_ebs_volume" "cache-disk" {
   availability_zone = aws_instance.ec2-sgw.availability_zone
-  size              = var.cache_block_device["disk_size"]
-  kms_key_id        = var.cache_block_device["kms_key_id"]
-  type              = var.cache_block_device["volume_type"]
   encrypted         = true
+  size              = try(tonumber(var.cache_block_device["disk_size"]), 150)
+  type              = try(var.cache_block_device["volume_type"], "gp3")
+  kms_key_id        = try(var.cache_block_device["kms_key_id"], null)
 }

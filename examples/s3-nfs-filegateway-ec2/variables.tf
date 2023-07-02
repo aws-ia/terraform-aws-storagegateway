@@ -31,7 +31,7 @@ variable "vpc_cidr_block" {
 variable "client_ip_cidrs" {
   type        = string
   sensitive   = true
-  description = "The IP addresses or CIDR block of clients that are allowed to access the file gateway. If there are multiple clients, please separate using commas. The value must contain either valid IP addresses or valid CIDR blocks. Minimum 1 item. Maximum 100 items."
+  description = "The IP addresses or CIDR block of clients that are allowed to access the file gateway. If there are multiple clients, please separate using commas. The value must contain valid CIDR blocks. Minimum 1 item. Maximum 100 items."
 }
 
 variable "subnet-count" {

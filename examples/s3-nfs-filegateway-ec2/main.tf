@@ -47,6 +47,16 @@ module "ec2-sgw" {
   create_security_group         = true
   ingress_cidr_blocks           = var.ingress_cidr_blocks
   ingress_cidr_block_activation = var.ingress_cidr_block_activation
+
+  # Cache and Root Volume encryption key
+  cache_block_device = {
+    kms_key_id = aws_kms_key.ec2-sgw-ebs.arn
+  }
+
+  root_block_device = {
+    kms_key_id = aws_kms_key.ec2-sgw-ebs.arn
+  }
+
 }
 
 #############################
@@ -162,6 +172,12 @@ module "log_delivery_bucket" {
 
 resource "aws_kms_key" "sgw" {
   description             = "KMS key for S3 object"
+  deletion_window_in_days = 7
+  enable_key_rotation     = true
+}
+
+resource "aws_kms_key" "ec2-sgw-ebs" {
+  description             = "KMS key for encrypting EBS root and cache disk"
   deletion_window_in_days = 7
   enable_key_rotation     = true
 }
