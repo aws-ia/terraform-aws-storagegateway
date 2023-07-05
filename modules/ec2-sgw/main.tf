@@ -24,7 +24,7 @@ resource "aws_instance" "ec2-sgw" {
   lifecycle {
     # the Security group ID must be non-empty or create_security_group must be true
     precondition {
-      condition     = var.create_security_group || try((length(var.security_group_id) > 3 && substr(var.security_group_id, 0, 3) == "sg-"),false)
+      condition     = var.create_security_group || try((length(var.security_group_id) > 3 && substr(var.security_group_id, 0, 3) == "sg-"), false)
       error_message = "Please specify create_security_group = true or provide a valid Security Group ID for var.security_group_id"
     }
   }

@@ -35,6 +35,7 @@ module "sgw" {
 #######################################
 
 module "ec2-sgw" {
+
   source              = "../../modules/ec2-sgw"
   vpc_id              = module.vpc.vpc_id
   subnet_id           = module.vpc.public_subnets[0]
@@ -50,11 +51,11 @@ module "ec2-sgw" {
 
   # Cache and Root Volume encryption key
   cache_block_device = {
-    kms_key_id = aws_kms_key.ec2-sgw-ebs.arn
+    kms_key_id = aws_kms_key.sgw.arn
   }
 
   root_block_device = {
-    kms_key_id = aws_kms_key.ec2-sgw-ebs.arn
+    kms_key_id = aws_kms_key.sgw.arn
   }
 
 }
@@ -171,13 +172,7 @@ module "log_delivery_bucket" {
 }
 
 resource "aws_kms_key" "sgw" {
-  description             = "KMS key for S3 object"
-  deletion_window_in_days = 7
-  enable_key_rotation     = true
-}
-
-resource "aws_kms_key" "ec2-sgw-ebs" {
-  description             = "KMS key for encrypting EBS root and cache disk"
+  description             = "KMS key for encrypting S3 buckets and EBS volumes"
   deletion_window_in_days = 7
   enable_key_rotation     = true
 }

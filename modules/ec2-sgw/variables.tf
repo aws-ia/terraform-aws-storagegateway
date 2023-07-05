@@ -5,28 +5,28 @@ variable "aws_region" {
 
 variable "availability_zone" {
   type        = string
-  description = "Availability zone for the Gateway Ec2 Instance."
+  description = "Availability zone for the Gateway EC2 Instance"
 }
 
 variable "name" {
   default     = "aws-storage-gateway"
   type        = string
-  description = "Name of the storage gateway instance that will be created in EC2"
+  description = "Name of the EC2 Storage Gateway instance"
 }
 
 variable "subnet_id" {
   type        = string
-  description = "The ID of the Subnet which the EC2 Instance will be launched into."
+  description = "VPC Subnet ID to launch in the EC2 Instance"
 }
 
 variable "vpc_id" {
   type        = string
-  description = "The VPC ID of the VPC that the Storage Gateway Security Group will be created in."
+  description = "The VPC ID in which the Storage Gateway security group will be created in"
 }
 
 variable "security_group_id" {
   type        = string
-  description = "Optionally provide an existing Security Group ID to associate with EC2 Storage Gateway appliance. Variable create_security_group should be set to false to use exsiting Security Group."
+  description = "Optionally provide an existing Security Group ID to associate with EC2 Storage Gateway appliance. Variable create_security_group should be set to false to use an existing Security Group"
   default     = null
 }
 
