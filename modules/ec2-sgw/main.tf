@@ -41,7 +41,12 @@ data "aws_ami" "sgw-ami" {
 }
 
 resource "aws_eip" "ip" {
-  instance = aws_instance.ec2-sgw.id
+
+}
+
+resource "aws_eip_association" "eip_assoc" {
+  instance_id   = aws_instance.ec2-sgw.id
+  allocation_id = aws_eip.ip.id
 }
 
 resource "aws_key_pair" "ec2_sgw_key_pair" {
