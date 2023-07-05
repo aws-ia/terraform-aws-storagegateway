@@ -11,6 +11,10 @@ resource "aws_instance" "ec2-sgw" {
   ebs_optimized          = true
   availability_zone      = var.availability_zone
 
+  metadata_options {
+    http_tokens = "required"
+  }
+
   root_block_device {
     encrypted   = true
     volume_size = try(tonumber(var.root_block_device["disk_size"]), 80)
