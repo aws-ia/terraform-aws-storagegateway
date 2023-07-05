@@ -93,7 +93,7 @@ variable "gateway_vpc_endpoint" {
 
 variable "create_vpc_endpoint" {
   type        = bool
-  description = "Create an Interface VPC endpoint for the EC2 Storage Gateway"
+  description = "Create an Interface VPC endpoint for the Storage Gateway"
   default     = false
 }
 
@@ -111,7 +111,7 @@ variable "vpc_endpoint_subnet_ids" {
 
 variable "create_vpc_endpoint_security_group" {
   type        = bool
-  description = "Create a Security Group for the VPC Endpoint for EC2 Storage Gateway appliance."
+  description = "Create a Security Group for the VPC Endpoint for Storage Gateway appliance."
   default     = false
 }
 
