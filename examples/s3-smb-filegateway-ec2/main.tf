@@ -67,10 +67,10 @@ data "aws_availability_zones" "available" {}
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  cidr            = var.ingress_cidr_blocks
+  cidr            = var.vpc_cidr_block
   azs             = slice(data.aws_availability_zones.available.names, 0, (var.subnet-count))
-  private_subnets = [for subnet in range(var.subnet-count) : cidrsubnet(var.ingress_cidr_blocks, 8, subnet)] # For Private subnets
-  public_subnets  = [for subnet in range(var.subnet-count) : cidrsubnet(var.ingress_cidr_blocks, 8, sum([subnet, var.subnet-count]))]
+  private_subnets = [for subnet in range(var.subnet-count) : cidrsubnet(var.vpc_cidr_block, 8, subnet)] # For Private subnets
+  public_subnets  = [for subnet in range(var.subnet-count) : cidrsubnet(var.vpc_cidr_block, 8, sum([subnet, var.subnet-count]))]
   name            = "${random_pet.name.id}-gateway-vpc"
 
   enable_dns_hostnames = true
