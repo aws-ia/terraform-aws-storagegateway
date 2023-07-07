@@ -8,7 +8,7 @@ resource "random_pet" "name" {
 }
 
 locals {
-  share_name = "${random_pet.name.id}-${module.sgw.storage_gateway.gateway_id}"
+  share_name      = "${random_pet.name.id}-${module.sgw.storage_gateway.gateway_id}"
 }
 
 ######################################
@@ -34,6 +34,7 @@ module "sgw" {
 #######################################
 
 module "ec2-sgw" {
+
   source              = "../../modules/ec2-sgw"
   vpc_id              = module.vpc.vpc_id
   subnet_id           = module.vpc.public_subnets[0]
@@ -55,6 +56,7 @@ module "ec2-sgw" {
   root_block_device = {
     kms_key_id = aws_kms_key.sgw.arn
   }
+
 }
 
 #############################
