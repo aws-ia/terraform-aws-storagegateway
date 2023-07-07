@@ -7,7 +7,6 @@ variable "name" {
 variable "aws_region" {
   type        = string
   description = "Region for AWS Resources"
-  # default     = ""
 }
 
 # variable "availability_zone" {

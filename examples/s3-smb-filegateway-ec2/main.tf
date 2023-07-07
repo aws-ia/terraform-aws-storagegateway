@@ -16,25 +16,45 @@ locals {
 ######################################
 
 module "sgw" {
-  depends_on         = [module.ec2]
-  source             = "../../modules/aws-sgw"
-  gateway_name       = random_pet.name.id
-  gateway_ip_address = module.ec2.public_ip
-  join_smb_domain    = true
-  gateway_type       = "FILE_S3"
+  depends_on                         = [module.ec2-sgw]
+  source                             = "../../modules/aws-sgw"
+  gateway_name                       = random_pet.name.id
+  gateway_ip_address                 = module.ec2-sgw.public_ip
+  join_smb_domain                    = true
+  gateway_type                       = "FILE_S3"
+  create_vpc_endpoint                = true
+  create_vpc_endpoint_security_group = true #if false define vpc_endpoint_security_group_id 
+  vpc_id                             = module.vpc.vpc_id
+  vpc_endpoint_subnet_ids            = module.vpc.private_subnets
+  gateway_private_ip_address         = module.ec2-sgw.private_ip
 }
 
 #######################################
 # Create EC2  File Gateway
 #######################################
 
-module "ec2" {
-  source            = "../../modules/ec2-sgw"
-  vpc_id            = module.vpc.vpc_id
-  subnet_id         = module.vpc.public_subnets[0]
-  name              = "${random_pet.name.id}-gateway"
-  availability_zone = "${data.aws_availability_zones.available.names[0]}"
+module "ec2-sgw" {
+  source              = "../../modules/ec2-sgw"
+  vpc_id              = module.vpc.vpc_id
+  subnet_id           = module.vpc.public_subnets[0]
+  name                = "${random_pet.name.id}-gateway"
+  availability_zone   = data.aws_availability_zones.available.names[0]
+  aws_region          = var.aws_region
+  ssh_public_key_path = var.ssh_public_key_path
 
+  #If create security_group = true , define ingress cidr blocks, if not use security_group_id
+  create_security_group         = true
+  ingress_cidr_blocks           = var.ingress_cidr_blocks
+  ingress_cidr_block_activation = var.ingress_cidr_block_activation
+
+  # Cache and Root Volume encryption key
+  cache_block_device = {
+    kms_key_id = aws_kms_key.sgw.arn
+  }
+
+  root_block_device = {
+    kms_key_id = aws_kms_key.sgw.arn
+  }
 }
 
 #############################
@@ -42,9 +62,10 @@ module "ec2" {
 #############################
 
 data "aws_availability_zones" "available" {}
-
+#VPC flow logs enabled. Skipping tfsec bug https://github.com/aquasecurity/tfsec/issues/1941
+#tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
 module "vpc" {
-  source          = "terraform-aws-modules/vpc/aws"
+  source = "terraform-aws-modules/vpc/aws"
 
   cidr            = var.ingress_cidr_blocks
   azs             = slice(data.aws_availability_zones.available.names, 0, (var.subnet-count))
@@ -52,7 +73,7 @@ module "vpc" {
   public_subnets  = [for subnet in range(var.subnet-count) : cidrsubnet(var.ingress_cidr_blocks, 8, sum([subnet, var.subnet-count]))]
   name            = "${random_pet.name.id}-gateway-vpc"
 
-  enable_dns_hostnames    = true
+  enable_dns_hostnames = true
 
 }
 
@@ -61,8 +82,8 @@ module "vpc" {
 ###################################
 
 resource "aws_vpc_endpoint" "s3" {
-  vpc_id       = module.vpc.vpc_id
-  service_name = "com.amazonaws.${var.aws_region}.s3"
+  vpc_id          = module.vpc.vpc_id
+  service_name    = "com.amazonaws.${var.aws_region}.s3"
   route_table_ids = module.vpc.private_route_table_ids
 }
 
@@ -146,7 +167,7 @@ module "log_delivery_bucket" {
 }
 
 resource "aws_kms_key" "sgw" {
-  description             = "KMS key for S3 object"
+  description             = "KMS key for encrypting S3 buckets and EBS volumes"
   deletion_window_in_days = 7
   enable_key_rotation     = true
 }
