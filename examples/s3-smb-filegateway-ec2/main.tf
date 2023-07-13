@@ -64,6 +64,7 @@ module "ec2-sgw" {
 #############################
 
 data "aws_availability_zones" "available" {}
+
 #VPC flow logs enabled. Skipping tfsec bug https://github.com/aquasecurity/tfsec/issues/1941
 #tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
 module "vpc" {
@@ -75,8 +76,12 @@ module "vpc" {
   public_subnets  = [for subnet in range(var.subnet-count) : cidrsubnet(var.vpc_cidr_block, 8, sum([subnet, var.subnet-count]))]
   name            = "${random_pet.name.id}-gateway-vpc"
 
-  enable_dns_hostnames = true
-
+  enable_dns_hostnames                 = true
+  create_igw                           = true
+  enable_flow_log                      = true
+  create_flow_log_cloudwatch_log_group = true
+  create_flow_log_cloudwatch_iam_role  = true
+  flow_log_max_aggregation_interval    = 60
 }
 
 ###################################
@@ -135,6 +140,8 @@ module "smb_share" {
   bucket_arn    = module.s3_bucket.s3_bucket_arn
   role_arn      = aws_iam_role.sgw.arn
   log_group_arn = aws_cloudwatch_log_group.smbshare.arn
+  kms_encrypted = true
+  kms_key_arn = aws_kms_key.sgw.arn
 }
 
 #######################################################################
