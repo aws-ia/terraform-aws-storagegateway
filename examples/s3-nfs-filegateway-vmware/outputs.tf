@@ -1,6 +1,7 @@
 output "storage_gateway_id" {
   value       = module.sgw.storage_gateway.gateway_id
   description = "Storage Gateway ID"
+  sensitive   = true
 }
 
 output "s3_bucket_id" {
