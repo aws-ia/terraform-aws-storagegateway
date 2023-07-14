@@ -144,7 +144,7 @@ module "nfs_share" {
   log_group_arn = aws_cloudwatch_log_group.smbshare.arn
   client_list   = local.client_ip_cidrs
   kms_encrypted = true
-  kms_key_arn = aws_kms_key.sgw.arn
+  kms_key_arn   = aws_kms_key.sgw.arn
 }
 
 #######################################################################
