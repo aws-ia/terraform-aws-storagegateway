@@ -8,14 +8,14 @@ Creates an SMB file share backed by S3. For an end to end example on VMware, ref
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.7 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.0.0, < 5.0.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.0.0 |
 | <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 0.24.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.0.0, < 5.0.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.0.0 |
 
 ## Modules
 
@@ -41,8 +41,11 @@ No modules.
 | <a name="input_directory_mode"></a> [directory\_mode](#input\_directory\_mode) | (Optional) The Unix directory mode in the string form "nnnn". Defaults to "0777" value | `string` | `"0777"` | no |
 | <a name="input_file_mode"></a> [file\_mode](#input\_file\_mode) | (Optional) The Unix file mode in the string form "nnnn". Defaults to "0666" | `string` | `"0666"` | no |
 | <a name="input_group_id"></a> [group\_id](#input\_group\_id) | (Optional) The default group ID for the file share (unless the files have another group ID specified). Defaults to 65534 (nfsnobody). Valid values: 0 through 4294967294 | `number` | `"65534"` | no |
+| <a name="input_kms_encrypted"></a> [kms\_encrypted](#input\_kms\_encrypted) | (Optional) Boolean value if true to use Amazon S3 server side encryption with your own AWS KMS key, or false to use a key managed by Amazon S3. Defaults to false | `bool` | `false` | no |
+| <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | (Optional) Amazon Resource Name (ARN) for KMS key used for Amazon S3 server side encryption. This value can only be set when kms\_encrypted is true. | `string` | `null` | no |
 | <a name="input_owner_id"></a> [owner\_id](#input\_owner\_id) | (Optional) The default owner ID for the file share (unless the files have another owner ID specified). Defaults to 65534 (nfsnobody). Valid values: 0 through 4294967294 | `number` | `"65534"` | no |
 | <a name="input_storage_class"></a> [storage\_class](#input\_storage\_class) | Storage class for NFS file share. Valid options are S3\_STANDARD \| S3\_INTELLIGENT\_TIERING \| S3\_STANDARD\_IA \| S3\_ONEZONE\_IA | `string` | `"S3_STANDARD"` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | (Optional) Key-value map of resource tags. | `map(any)` | `{}` | no |
 
 ## Outputs
 
