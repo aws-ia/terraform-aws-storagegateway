@@ -71,7 +71,7 @@ variable "ssh_key_name" {
 
 variable "ssh_public_key_path" {
   type        = string
-  description = "Absolute file path to the the public key for the EC2 Key pair"
+  description = "Optional attribute to the absolute file path to the the public key for the EC2 Key pair"
   default     = ""
 }
 
