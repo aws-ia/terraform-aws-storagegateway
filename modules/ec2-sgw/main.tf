@@ -2,12 +2,17 @@
 ## Create EC2 Instance ##
 ##########################
 
+locals {
+  key_name               = length(var.ssh_public_key_path) > 0 ? aws_key_pair.ec2_sgw_key_pair["ec2_sgw_key_pair"].key_name : null
+  vpc_security_group_ids = var.create_security_group ? [aws_security_group.ec2_sg["ec2_sg"].id] : [var.security_group_id]
+}
+
 resource "aws_instance" "ec2-sgw" {
   ami                    = data.aws_ami.sgw-ami.id
-  vpc_security_group_ids = var.create_security_group ? [aws_security_group.ec2_sg["ec2_sg"].id] : [var.security_group_id]
+  vpc_security_group_ids = local.vpc_security_group_ids
   subnet_id              = var.subnet_id
   instance_type          = var.instance_type
-  key_name               = aws_key_pair.ec2_sgw_key_pair.key_name
+  key_name               = local.key_name
   ebs_optimized          = true
   availability_zone      = var.availability_zone
 
@@ -54,6 +59,9 @@ resource "aws_eip_association" "eip_assoc" {
 }
 
 resource "aws_key_pair" "ec2_sgw_key_pair" {
+
+  for_each = length(var.ssh_public_key_path) > 0 ? toset(["ec2_sgw_key_pair"]) : toset([])
+
   key_name   = var.ssh_key_name
   public_key = file(var.ssh_public_key_path)
 }

@@ -42,7 +42,7 @@ module "ec2-sgw" {
   name                = "${random_pet.name.id}-gateway"
   availability_zone   = data.aws_availability_zones.available.names[0]
   aws_region          = var.aws_region
-  ssh_public_key_path = var.ssh_public_key_path
+  ssh_public_key_path = var.ssh_public_key_path //optional
 
   #If create security_group = true , define ingress cidr blocks, if not use security_group_id
   create_security_group         = true

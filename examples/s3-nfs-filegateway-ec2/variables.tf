@@ -9,12 +9,6 @@ variable "aws_region" {
   description = "Region for AWS Resources"
 }
 
-# variable "availability_zone" {
-#   type        = string
-#   description = "Availability zone for the Gateway Ec2 Instance."
-#   default     = ""
-# }
-
 variable "allow_unverified_ssl" {
   type        = bool
   description = "Boolean that can be set to true to disable SSL certificate verification."
@@ -48,10 +42,10 @@ variable "ingress_cidr_blocks" {
 variable "ingress_cidr_block_activation" {
   type        = string
   description = "The CIDR block to allow ingress port 80 into your File Gateway instance for activation. For multiple CIDR blocks, please separate with comma"
-  # default     = "0.0.0.0/0"
 }
 
 variable "ssh_public_key_path" {
   type        = string
   description = "Absolute file path to the the public key for the EC2 Key pair"
+  default     = ""
 }

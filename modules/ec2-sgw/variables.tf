@@ -72,6 +72,7 @@ variable "ssh_key_name" {
 variable "ssh_public_key_path" {
   type        = string
   description = "Absolute file path to the the public key for the EC2 Key pair"
+  default     = ""
 }
 
 variable "root_block_device" {
