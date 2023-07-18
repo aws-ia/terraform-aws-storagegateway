@@ -49,3 +49,9 @@ variable "ssh_public_key_path" {
   description = "Absolute file path to the the public key for the EC2 Key pair"
   default     = ""
 }
+
+variable "ssh_key_name" {
+  type        = string
+  description = "(Optional) The name of an existing EC2 Key pair for SSH access to the EC2 Storage Gateway appliance"
+  default     = null
+}

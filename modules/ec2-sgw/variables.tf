@@ -65,14 +65,8 @@ variable "timezone" {
 
 variable "ssh_key_name" {
   type        = string
-  description = "The name of EC2 Key pair for SSH access to the EC2 Storage Gateway appliance"
-  default     = "ec2-sgw-key-pair"
-}
-
-variable "ssh_public_key_path" {
-  type        = string
-  description = "Optional attribute to the absolute file path to the the public key for the EC2 Key pair"
-  default     = ""
+  description = "(Optional) The name of an existing EC2 Key pair for SSH access to the EC2 Storage Gateway appliance"
+  default     = null
 }
 
 variable "root_block_device" {

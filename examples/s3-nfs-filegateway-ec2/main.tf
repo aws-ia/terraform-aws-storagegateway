@@ -42,7 +42,7 @@ module "ec2-sgw" {
   name                = "${random_pet.name.id}-gateway"
   availability_zone   = data.aws_availability_zones.available.names[0]
   aws_region          = var.aws_region
-  ssh_public_key_path = var.ssh_public_key_path //optional
+  ssh_key_name        = local.key_name
 
   #If create security_group = true , define ingress cidr blocks, if not use security_group_id
   create_security_group         = true
@@ -183,6 +183,21 @@ resource "aws_kms_key" "sgw" {
   deletion_window_in_days = 7
   enable_key_rotation     = true
 }
+
+locals {
+  key_name = length(var.ssh_public_key_path) > 0 ? aws_key_pair.ec2_sgw_key_pair["ec2_sgw_key_pair"].key_name : null
+}
+
+resource "aws_key_pair" "ec2_sgw_key_pair" {
+
+  for_each = length(var.ssh_public_key_path) > 0 ? toset(["ec2_sgw_key_pair"]) : toset([])
+
+  key_name   = var.ssh_key_name
+  public_key = file(var.ssh_public_key_path)
+}
+
+
+
 
 #####################################################################
 # Create log group for SMB File share (Optional if already created)
