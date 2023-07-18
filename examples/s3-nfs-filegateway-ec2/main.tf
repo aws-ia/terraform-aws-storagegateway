@@ -17,32 +17,32 @@ locals {
 ######################################
 
 module "sgw" {
-  depends_on                         = [module.ec2-sgw]
+  depends_on                         = [module.ec2_sgw]
   source                             = "../../modules/aws-sgw"
   gateway_name                       = random_pet.name.id
-  gateway_ip_address                 = module.ec2-sgw.public_ip
+  gateway_ip_address                 = module.ec2_sgw.public_ip
   join_smb_domain                    = false
   gateway_type                       = "FILE_S3"
   create_vpc_endpoint                = true
   create_vpc_endpoint_security_group = true #if false define vpc_endpoint_security_group_id 
   vpc_id                             = module.vpc.vpc_id
   vpc_endpoint_subnet_ids            = module.vpc.private_subnets
-  gateway_private_ip_address         = module.ec2-sgw.private_ip
+  gateway_private_ip_address         = module.ec2_sgw.private_ip
 }
 
 #######################################
 # Create EC2  File Gateway
 #######################################
 
-module "ec2-sgw" {
+module "ec2_sgw" {
 
-  source              = "../../modules/ec2-sgw"
-  vpc_id              = module.vpc.vpc_id
-  subnet_id           = module.vpc.public_subnets[0]
-  name                = "${random_pet.name.id}-gateway"
-  availability_zone   = data.aws_availability_zones.available.names[0]
-  aws_region          = var.aws_region
-  ssh_key_name        = local.key_name
+  source            = "../../modules/ec2-sgw"
+  vpc_id            = module.vpc.vpc_id
+  subnet_id         = module.vpc.public_subnets[0]
+  name              = "${random_pet.name.id}-gateway"
+  availability_zone = data.aws_availability_zones.available.names[0]
+  aws_region        = var.aws_region
+  ssh_key_name      = local.key_name
 
   #If create security_group = true , define ingress cidr blocks, if not use security_group_id
   create_security_group         = true
@@ -69,7 +69,8 @@ data "aws_availability_zones" "available" {}
 #VPC flow logs enabled. Skipping tfsec bug https://github.com/aquasecurity/tfsec/issues/1941
 #tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
+  version = ">=5.0.0"
 
   cidr = var.vpc_cidr_block
 
