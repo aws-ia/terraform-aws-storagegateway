@@ -20,12 +20,12 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_ec2-sgw"></a> [ec2-sgw](#module\_ec2-sgw) | ../../modules/ec2-sgw | n/a |
+| <a name="module_ec2_sgw"></a> [ec2\_sgw](#module\_ec2\_sgw) | ../../modules/ec2-sgw | n/a |
 | <a name="module_log_delivery_bucket"></a> [log\_delivery\_bucket](#module\_log\_delivery\_bucket) | terraform-aws-modules/s3-bucket/aws | >=3.5.0 |
 | <a name="module_nfs_share"></a> [nfs\_share](#module\_nfs\_share) | ../../modules/s3-nfs-share | n/a |
 | <a name="module_s3_bucket"></a> [s3\_bucket](#module\_s3\_bucket) | terraform-aws-modules/s3-bucket/aws | >=3.5.0 |
 | <a name="module_sgw"></a> [sgw](#module\_sgw) | ../../modules/aws-sgw | n/a |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | terraform-aws-modules/vpc/aws | n/a |
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | terraform-aws-modules/vpc/aws | >=5.0.0 |
 
 ## Resources
 
@@ -35,6 +35,7 @@
 | [aws_iam_policy.sgw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.sgw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy_attachment.sgw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_key_pair.ec2_sgw_key_pair](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/key_pair) | resource |
 | [aws_kms_key.sgw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
 | [aws_vpc_endpoint.s3](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
 | [random_pet.name](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) | resource |
@@ -46,12 +47,11 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_allow_unverified_ssl"></a> [allow\_unverified\_ssl](#input\_allow\_unverified\_ssl) | Boolean that can be set to true to disable SSL certificate verification. | `bool` | `false` | no |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | Region for AWS Resources | `string` | n/a | yes |
 | <a name="input_client_ip_cidrs"></a> [client\_ip\_cidrs](#input\_client\_ip\_cidrs) | The IP addresses or CIDR block of clients that are allowed to access the file gateway. If there are multiple clients, please separate using commas. The value must contain valid CIDR blocks. Minimum 1 item. Maximum 100 items. | `string` | n/a | yes |
 | <a name="input_ingress_cidr_block_activation"></a> [ingress\_cidr\_block\_activation](#input\_ingress\_cidr\_block\_activation) | The CIDR block to allow ingress port 80 into your File Gateway instance for activation. For multiple CIDR blocks, please separate with comma | `string` | n/a | yes |
 | <a name="input_ingress_cidr_blocks"></a> [ingress\_cidr\_blocks](#input\_ingress\_cidr\_blocks) | The CIDR blocks to allow ingress into your File Gateway instance for NFS and SMB client access. For multiple CIDR blocks, please separate with comma | `string` | `"10.0.0.0/16"` | no |
-| <a name="input_name"></a> [name](#input\_name) | Name of the storage gateway instance that will be created in EC2 | `string` | `"aws-storage-gateway"` | no |
+| <a name="input_ssh_key_name"></a> [ssh\_key\_name](#input\_ssh\_key\_name) | (Optional) The name of an existing EC2 Key pair for SSH access to the EC2 Storage Gateway appliance | `string` | `null` | no |
 | <a name="input_ssh_public_key_path"></a> [ssh\_public\_key\_path](#input\_ssh\_public\_key\_path) | Absolute file path to the the public key for the EC2 Key pair | `string` | `""` | no |
 | <a name="input_subnet-count"></a> [subnet-count](#input\_subnet-count) | Number of sunbets per type | `number` | `1` | no |
 | <a name="input_vpc_cidr_block"></a> [vpc\_cidr\_block](#input\_vpc\_cidr\_block) | VPC CIDR block for the creation of example VPC and subnets | `string` | `"10.0.0.0/16"` | no |

@@ -1,18 +1,6 @@
-variable "name" {
-  default     = "aws-storage-gateway"
-  type        = string
-  description = "Name of the storage gateway instance that will be created in EC2"
-}
-
 variable "aws_region" {
   type        = string
   description = "Region for AWS Resources"
-}
-
-variable "allow_unverified_ssl" {
-  type        = bool
-  description = "Boolean that can be set to true to disable SSL certificate verification."
-  default     = false
 }
 
 variable "vpc_cidr_block" {
