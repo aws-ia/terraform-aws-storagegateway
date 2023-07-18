@@ -39,9 +39,10 @@ variable "ingress_cidr_blocks" {
 
 variable "egress_cidr_blocks" {
   type        = string
-  description = "The CIDR blocks to allow ingress into your File Gateway instance for NFS and SMB client access. For multiple CIDR blocks, please separate with comma"
+  description = "The CIDR blocks for Gateway activation. Defaults to 0.0.0.0/0"
   default     = "0.0.0.0/0"
 }
+
 variable "ingress_cidr_block_activation" {
   type        = string
   description = "The CIDR block to allow ingress port 80 into your File Gateway instance for activation. For multiple CIDR blocks, please separate with comma"
