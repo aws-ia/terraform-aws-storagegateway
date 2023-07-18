@@ -14,9 +14,9 @@ subnet_id = "subnet-1234567890"
 ## ingress_cidr_blocks : VPC CIDR
 ingress_cidr_blocks = "10.0.0.0/24,10.0.1.0/24"
 
-ingress_cidr_block_activation = "10.0.0.0"
+ingress_cidr_block_activation = "10.0.0.0/16"
 
-ssh_public_key_path = "~/.ssh/id_ecdsa"
+create_security_group = true
 
 
 
