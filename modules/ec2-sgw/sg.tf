@@ -14,7 +14,7 @@ resource "aws_security_group" "ec2_sg" {
 }
 
 resource "aws_security_group_rule" "http" {
-  for_each          = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  for_each          = var.create_security_group == true ? toset(["http"]) : toset([])
   type              = "ingress"
   from_port         = 80
   to_port           = 80
@@ -25,7 +25,7 @@ resource "aws_security_group_rule" "http" {
 }
 
 resource "aws_security_group_rule" "nfs_tcp" {
-  for_each          = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  for_each          = var.create_security_group == true ? toset(["nfs_tcp"]) : toset([])
   type              = "ingress"
   from_port         = 2049
   to_port           = 2049
@@ -36,7 +36,7 @@ resource "aws_security_group_rule" "nfs_tcp" {
 }
 
 resource "aws_security_group_rule" "nfs_udp" {
-  for_each          = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  for_each          = var.create_security_group == true ? toset(["nfs_udp"]) : toset([])
   type              = "ingress"
   from_port         = 2049
   to_port           = 2049
@@ -47,7 +47,7 @@ resource "aws_security_group_rule" "nfs_udp" {
 }
 
 resource "aws_security_group_rule" "nfs_portmapper_tcp" {
-  for_each          = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  for_each          = var.create_security_group == true ? toset(["nfs_portmapper_tcp"]) : toset([])
   type              = "ingress"
   from_port         = 111
   to_port           = 111
@@ -58,7 +58,7 @@ resource "aws_security_group_rule" "nfs_portmapper_tcp" {
 }
 
 resource "aws_security_group_rule" "nfs_portmap_udp" {
-  for_each          = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  for_each          = var.create_security_group == true ? toset(["nfs_portmap_udp"]) : toset([])
   type              = "ingress"
   from_port         = 111
   to_port           = 111
@@ -70,10 +70,10 @@ resource "aws_security_group_rule" "nfs_portmap_udp" {
 
 
 resource "aws_security_group_rule" "nfs_v3_tcp" {
-  for_each          = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  for_each          = var.create_security_group == true ? toset(["nfs_v3_tcp"]) : toset([])
   type              = "ingress"
   from_port         = 20048
-  to_port           = 111
+  to_port           = 20048
   protocol          = "tcp"
   description       = "NFSv3-TCP"
   cidr_blocks       = local.ingress_cidr_blocks_list
@@ -81,10 +81,10 @@ resource "aws_security_group_rule" "nfs_v3_tcp" {
 }
 
 resource "aws_security_group_rule" "nfs_v3_udp" {
-  for_each          = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  for_each          = var.create_security_group == true ? toset(["nfs_v3_udp"]) : toset([])
   type              = "ingress"
   from_port         = 20048
-  to_port           = 111
+  to_port           = 20048
   protocol          = "UDP"
   description       = "NFSv3-UDP"
   cidr_blocks       = local.ingress_cidr_blocks_list
@@ -92,7 +92,7 @@ resource "aws_security_group_rule" "nfs_v3_udp" {
 }
 
 resource "aws_security_group_rule" "https" {
-  for_each          = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  for_each          = var.create_security_group == true ? toset(["https"]) : toset([])
   type              = "ingress"
   from_port         = 443
   to_port           = 443
@@ -103,7 +103,7 @@ resource "aws_security_group_rule" "https" {
 }
 
 resource "aws_security_group_rule" "dns_tcp" {
-  for_each          = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  for_each          = var.create_security_group == true ? toset(["dns_tcp"]) : toset([])
   type              = "ingress"
   from_port         = 53
   to_port           = 53
@@ -114,7 +114,7 @@ resource "aws_security_group_rule" "dns_tcp" {
 }
 
 resource "aws_security_group_rule" "ntp_udp" {
-  for_each          = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  for_each          = var.create_security_group == true ? toset(["ntp_udp"]) : toset([])
   type              = "ingress"
   from_port         = 123
   to_port           = 123
@@ -125,7 +125,7 @@ resource "aws_security_group_rule" "ntp_udp" {
 }
 
 resource "aws_security_group_rule" "smb_netbios_tcp" {
-  for_each          = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  for_each          = var.create_security_group == true ? toset(["smb_netbios_tcp"]) : toset([])
   type              = "ingress"
   from_port         = 139
   to_port           = 139
@@ -147,7 +147,7 @@ resource "aws_security_group_rule" "smb_netbios_udp" {
 }
 
 resource "aws_security_group_rule" "smb_tcp" {
-  for_each          = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  for_each          = var.create_security_group == true ? toset(["smb_tcp"]) : toset([])
   type              = "ingress"
   from_port         = 445
   to_port           = 455
@@ -158,9 +158,9 @@ resource "aws_security_group_rule" "smb_tcp" {
 }
 
 #outbound connections for Storage Gateway for activation
-#tfsec:ignore:aws-ec2-no-public-egress-sgr 
+#tfsec:ignore:aws-vpc-no-public-egress-sgr
 resource "aws_security_group_rule" "egress" {
-  for_each          = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  for_each          = var.create_security_group == true ? toset(["egress"]) : toset([])
   type              = "egress"
   from_port         = 0
   to_port           = 0
