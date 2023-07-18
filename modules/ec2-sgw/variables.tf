@@ -1,8 +1,3 @@
-variable "aws_region" {
-  type        = string
-  description = "Region for AWS Resources"
-}
-
 variable "availability_zone" {
   type        = string
   description = "Availability zone for the Gateway EC2 Instance"
@@ -42,6 +37,11 @@ variable "ingress_cidr_blocks" {
   default     = "10.0.0.0/16"
 }
 
+variable "egress_cidr_blocks" {
+  type        = string
+  description = "The CIDR blocks to allow ingress into your File Gateway instance for NFS and SMB client access. For multiple CIDR blocks, please separate with comma"
+  default     = "0.0.0.0/0"
+}
 variable "ingress_cidr_block_activation" {
   type        = string
   description = "The CIDR block to allow ingress port 80 into your File Gateway instance for activation. For multiple CIDR blocks, please separate with comma"

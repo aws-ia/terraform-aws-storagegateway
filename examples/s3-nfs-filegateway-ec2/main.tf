@@ -41,7 +41,6 @@ module "ec2_sgw" {
   subnet_id         = module.vpc.public_subnets[0]
   name              = "${random_pet.name.id}-gateway"
   availability_zone = data.aws_availability_zones.available.names[0]
-  aws_region        = var.aws_region
   ssh_key_name      = local.key_name
 
   #If create security_group = true , define ingress cidr blocks, if not use security_group_id
