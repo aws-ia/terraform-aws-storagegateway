@@ -184,7 +184,7 @@ The examples also includes "aws\_kms\_key" resource block to create a KMS key. F
 
 ## Networking Considerations
 
-### Storage Gateway VPC Endpoint configuration for EC2 Gateway
+### Storage Gateway interface VPC Endpoint configuration for EC2 Gateway
 
 Terraform Storage Gateway module allows you to optionally create an interface VPC Endpoint for Storage Gateway by setting create\_vpc\_endpoint=true. You can use this connection to activate your gateway and configure it to transfer data to AWS storage services without communicating over the public internet
 
@@ -207,7 +207,7 @@ module "ec2_sgw" {
 
  A security group is also needed for the VPC Endpoint. In the above example, the module handles creation of the security group. However, you may use the vpc\_endpoint\_security\_group\_id variable to associate an existing Security group with the VPC endpoint. Please see this [documentation](https://docs.aws.amazon.com/filegateway/latest/files3/gateway-private-link.html) which shows the Security Group requirements for Storage Gateway VPC endpoint. In this module, the security groups are already pre-configured with the required rules with the private IP address of the storage gateway appliance. The configuration can be found in the file [sg.tf](modules/aws-sgw/sg.tf)  file.
 
-S3 VPC Endpoint configuration
+S3 gateway VPC Endpoint configuration
 
 We recommend you configure create a separate VPC endpoint for Amazon S3 File Gateway to transfer data through the VPC rather than a NAT Gateway or NAT Instances. This allows for optimized and private routing to S3 and lower cost. In the S3 NFS File gateway example's [main.tf](examples/s3-nfs-filegateway-ec2/main.tf), we have created a Gateway VPC endpoint as shown below.
 
@@ -220,7 +220,7 @@ resource "aws_vpc_endpoint" "s3" {
 ```
 ### Storage Gateway Security Group Configuration for EC2 Gateway
 
-You can optionally create the security group and the required rules required for your gateway appliance by setting the variable to create\_security\_group = true. You can also limit access to range of ingress CIDR blocks in your network from where you require access to the storage gateway by modifying ingress\_cidr\_blocks attributes as shown in the example below.
+You can optionally create the security group and the required rules required for your gateway appliance by setting create\_security\_group = true. You can also limit access to range of ingress CIDR blocks in your network from where you require access to the storage gateway by modifying ingress\_cidr\_blocks attributes as shown in the example below.
 
 The module also includes the ingress\_cidr\_block\_activation variable specifically to limit access to the CIDR block of the client machine that activates the storage gateway on port 80. This Security Group rule can be optionally removed once the gateway is activated. The source code of the security group configuration can be found in modules/ec2-sgw/sg.tf file.
 
