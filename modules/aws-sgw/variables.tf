@@ -73,7 +73,13 @@ variable "gateway_ip_address" {
 variable "disk_path" {
   default     = "/dev/sdb"
   type        = string
-  description = "Path on the SGW appliance in vsphere where the cache disk resides on the OS"
+  description = "Disk path on the SGW appliance where the cache disk resides on the OS"
+}
+
+variable "disk_node" {
+  default     = "/dev/sdb"
+  type        = string
+  description = "Disk node on the SGW appliance where the cache disk resides on the OS"
 }
 
 variable "domain_controllers" {

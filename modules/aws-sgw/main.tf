@@ -50,7 +50,8 @@ resource "aws_storagegateway_cache" "sgw" {
 
 data "aws_storagegateway_local_disk" "sgw" {
   gateway_arn = aws_storagegateway_gateway.mysgw.arn
-  disk_node   = var.disk_path
+  disk_node   = var.disk_node
+  disk_path   = var.disk_path
 }
 
 ##########################
