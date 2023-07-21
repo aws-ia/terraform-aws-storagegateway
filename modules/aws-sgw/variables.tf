@@ -99,7 +99,7 @@ variable "gateway_vpc_endpoint" {
 
 variable "create_vpc_endpoint" {
   type        = bool
-  description = "Create an Interface VPC endpoint for the Storage Gateway"
+  description = "Create an interface VPC endpoint for the Storage Gateway"
   default     = false
 }
 

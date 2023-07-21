@@ -71,7 +71,7 @@ variable "ssh_key_name" {
 }
 
 variable "root_block_device" {
-  description = "Customize details about the root block device of the instance. See Block Devices for details"
+  description = "Customize details about the root block device of the instance. See Block Devices in README.md for details"
   type        = map(any)
   default = {
     kms_key_id  = null
@@ -81,7 +81,7 @@ variable "root_block_device" {
 }
 
 variable "cache_block_device" {
-  description = "Customize details about the additional block device of the instance. See Block Devices for details"
+  description = "Customize details about the additional block device of the instance. See Block Devices in README.md for details"
   type        = map(any)
   default = {
     kms_key_id  = null

@@ -41,7 +41,7 @@ module "ec2_sgw" {
   subnet_id         = module.vpc.public_subnets[0]
   name              = "${random_pet.name.id}-gateway"
   availability_zone = data.aws_availability_zones.available.names[0]
-  ssh_key_name      = local.key_name
+  ssh_key_name      = local.ssh_key_name
 
   #If create security_group = true , define ingress cidr blocks, if not use security_group_id
   create_security_group         = true
@@ -185,7 +185,7 @@ resource "aws_kms_key" "sgw" {
 }
 
 locals {
-  key_name = length(var.ssh_public_key_path) > 0 ? aws_key_pair.ec2_sgw_key_pair["ec2_sgw_key_pair"].key_name : null
+  ssh_key_name = length(var.ssh_public_key_path) > 0 ? aws_key_pair.ec2_sgw_key_pair["ec2_sgw_key_pair"].key_name : null
 }
 
 resource "aws_key_pair" "ec2_sgw_key_pair" {

@@ -51,7 +51,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_gateway_ip_address"></a> [gateway\_ip\_address](#input\_gateway\_ip\_address) | IP Address of the SGW appliance in vSphere | `string` | n/a | yes |
 | <a name="input_gateway_name"></a> [gateway\_name](#input\_gateway\_name) | Storage Gateway Name | `string` | n/a | yes |
-| <a name="input_create_vpc_endpoint"></a> [create\_vpc\_endpoint](#input\_create\_vpc\_endpoint) | Create an Interface VPC endpoint for the Storage Gateway | `bool` | `false` | no |
+| <a name="input_create_vpc_endpoint"></a> [create\_vpc\_endpoint](#input\_create\_vpc\_endpoint) | Create an interface VPC endpoint for the Storage Gateway | `bool` | `false` | no |
 | <a name="input_create_vpc_endpoint_security_group"></a> [create\_vpc\_endpoint\_security\_group](#input\_create\_vpc\_endpoint\_security\_group) | Create a Security Group for the VPC Endpoint for Storage Gateway appliance. | `bool` | `false` | no |
 | <a name="input_disk_node"></a> [disk\_node](#input\_disk\_node) | Disk node on the SGW appliance where the cache disk resides on the OS | `string` | `"/dev/sdb"` | no |
 | <a name="input_disk_path"></a> [disk\_path](#input\_disk\_path) | Disk path on the SGW appliance where the cache disk resides on the OS | `string` | `"/dev/sdb"` | no |
