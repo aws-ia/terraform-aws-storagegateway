@@ -94,3 +94,14 @@ variable "tags" {
   default     = {}
 }
 
+variable "kms_encrypted" {
+  type        = bool
+  description = "(Optional) Boolean value if true to use Amazon S3 server side encryption with your own AWS KMS key, or false to use a key managed by Amazon S3. Defaults to false"
+  default     = false
+}
+
+variable "kms_key_arn" {
+  type        = string
+  description = "(Optional) Amazon Resource Name (ARN) for KMS key used for Amazon S3 server side encryption. This value can only be set when kms_encrypted is true."
+  default     = null
+}

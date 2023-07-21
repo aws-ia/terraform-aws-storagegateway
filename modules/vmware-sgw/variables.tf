@@ -32,7 +32,7 @@ variable "datacenter" {
 
 variable "os_size" {
   type        = string
-  description = "Size of the OS disk of the appliance. Specified in gigabytes, default is the current appliance default. Likely doesn't need to be modified"
+  description = "Size of the OS disk of the VM. Specified in gigabytes, default is the current VM default. Likely doesn't need to be modified"
   default     = "80"
 }
 

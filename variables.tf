@@ -67,13 +67,19 @@ variable "gateway_type" {
 
 variable "gateway_ip_address" {
   type        = string
-  description = "IP Address of the SGW appliance in vSphere"
+  description = "IP Address of the Storage Gateway VM in vSphere"
 }
 
 variable "disk_path" {
   default     = "/dev/sdb"
   type        = string
-  description = "Path on the SGW appliance in vsphere where the cache disk resides on the OS"
+  description = "Disk path on the Storage Gateway VM where the cache disk resides on the OS"
+}
+
+variable "disk_node" {
+  default     = "/dev/sdb"
+  type        = string
+  description = "Disk node on the SGW Gateway VM where the cache disk resides on the OS"
 }
 
 variable "domain_controllers" {
@@ -81,4 +87,54 @@ variable "domain_controllers" {
   type        = list(any)
   sensitive   = true
   description = "List of IPv4 addresses, NetBIOS names, or host names of your domain server. If you need to specify the port number include it after the colon (“:”). For example, mydc.mydomain.com:389."
+}
+
+# VPC Endpoint related variables
+
+variable "gateway_vpc_endpoint" {
+  type        = string
+  description = "Existing VPC endpoint address to be used when activating your gateway. This variable value will be ignored if setting create_vpc_endpoint=true."
+  default     = null
+}
+
+variable "create_vpc_endpoint" {
+  type        = bool
+  description = "Create an interface VPC endpoint for the Storage Gateway"
+  default     = false
+}
+
+variable "vpc_id" {
+  type        = string
+  description = "VPC id for creating a VPC endpoint. Must provide a valid value if create_vpc_endpoint=true."
+  default     = null
+}
+
+variable "vpc_endpoint_subnet_ids" {
+  type        = list(string)
+  description = "Provide existing subnet IDs to associate with the VPC Endpoint. Must provide a valid values if create_vpc_endpoint=true."
+  default     = null
+}
+
+variable "create_vpc_endpoint_security_group" {
+  type        = bool
+  description = "Create a Security Group for the VPC Endpoint for Storage Gateway"
+  default     = false
+}
+
+variable "vpc_endpoint_security_group_id" {
+  type        = string
+  description = "Optionally provide an existing Security Group ID to associate with the VPC Endpoint. Must be set if create_vpc_endpoint_security_group=false"
+  default     = null
+}
+
+variable "gateway_private_ip_address" {
+  type        = string
+  description = "Inbound IP address of Gateway VM for Security Group associated with VPC Endpoint. Must be set if create_vpc_endpoint=true"
+  default     = null
+}
+
+variable "vpc_endpoint_private_dns_enabled" {
+  type        = bool
+  description = "Enable private DNS for VPC Endpoint"
+  default     = false
 }

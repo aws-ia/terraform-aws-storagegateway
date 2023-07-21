@@ -1,0 +1,18 @@
+## VPC CIDR Block
+vpc_cidr_block = "10.0.0.0/16"
+
+## EC2 Region 
+aws_region = "us-east-1"
+
+## NFS Client List
+client_ip_cidrs = "10.0.0.0/16"
+
+## SSH public key path
+ssh_public_key_path = "/Users/User/.ssh/id_rsa.pub"
+
+## Ingress CIDR block of client machine requesting Gateway activation
+ingress_cidr_block_activation = "10.11.12.13/32"
+
+
+
+

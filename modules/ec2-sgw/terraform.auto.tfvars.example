@@ -1,0 +1,24 @@
+## EC2 Region and AZ
+aws_region = "us-east-1"
+availability_zone = "us-east-1a"
+
+# ## VPC ID
+vpc_id = "vpc-1234567890"
+
+# ## Subnet ID
+subnet_id = "subnet-1234567890"
+
+## Security Group ID : Provide a valid security_group_id if create_security_group is set to false
+#security_group_id = "sg-123456abcd"
+
+## ingress_cidr_blocks : VPC CIDR
+ingress_cidr_blocks = "10.0.0.0/24,10.0.1.0/24"
+
+ingress_cidr_block_activation = "10.0.0.0/16"
+
+create_security_group = true
+
+
+
+
+

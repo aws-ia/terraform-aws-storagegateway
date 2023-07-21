@@ -10,6 +10,8 @@ resource "aws_storagegateway_nfs_file_share" "nfsshare" {
   role_arn              = var.role_arn
   default_storage_class = var.storage_class
   audit_destination_arn = var.log_group_arn
+  kms_encrypted         = var.kms_encrypted
+  kms_key_arn           = var.kms_encrypted ? var.kms_key_arn : null
 
   nfs_file_share_defaults {
     directory_mode = var.directory_mode
