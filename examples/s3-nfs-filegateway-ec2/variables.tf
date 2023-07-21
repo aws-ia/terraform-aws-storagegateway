@@ -34,7 +34,7 @@ variable "ingress_cidr_block_activation" {
 
 variable "ssh_public_key_path" {
   type        = string
-  description = "Absolute file path to the the public key for the EC2 Key pair"
+  description = "(Optional) Absolute file path to the the public key for the EC2 Key pair. If ommitted, the EC2 key pair resource will not be created"
   default     = ""
 }
 
