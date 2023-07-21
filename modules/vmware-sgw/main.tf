@@ -21,7 +21,7 @@ data "vsphere_host" "host" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-# vsphere port group that will be used for the appliance
+# vsphere port group that will be used for the Gateway
 data "vsphere_network" "network" {
   name          = var.network
   datacenter_id = data.vsphere_datacenter.dc.id
