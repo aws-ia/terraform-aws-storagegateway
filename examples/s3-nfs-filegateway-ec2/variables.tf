@@ -40,6 +40,6 @@ variable "ssh_public_key_path" {
 
 variable "ssh_key_name" {
   type        = string
-  description = "(Optional) The name of an existing EC2 Key pair for SSH access to the EC2 Storage Gateway appliance"
+  description = "(Optional) The name of an existing EC2 Key pair for SSH access to the EC2 Storage Gateway"
   default     = null
 }

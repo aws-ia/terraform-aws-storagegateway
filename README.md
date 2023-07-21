@@ -106,7 +106,7 @@ module "ec2_sgw" {
 
 ### [Storage Gateway Module](modules/aws-sgw/)
 
-Once the EC2 appliance is deployed, the public IP address of the EC2 instance needs to be passed to next module as the gateway IP address.
+Once the EC2 Gateway is deployed, the public IP address of the EC2 instance needs to be passed to next module as the gateway IP address.
 
 ```hcl
 module "sgw" {
@@ -186,9 +186,9 @@ The examples also includes "aws\_kms\_key" resource block to create a KMS key. F
 
 ### Storage Gateway interface VPC Endpoint configuration for EC2 Gateway
 
-Terraform Storage Gateway module allows you to optionally create an interface VPC Endpoint for Storage Gateway by setting create\_vpc\_endpoint=true. You can use this connection to activate your gateway and configure it to transfer data to AWS storage services without communicating over the public internet
+The Storage Gateway module allows you to optionally create an interface VPC Endpoint for Storage Gateway by setting `create_vpc_endpoint = true`. You can use this endpoint to activate your gateway and to transfer data to AWS storage services without communicating over the public internet.
 
-Example with VPC endpoint configuration :
+Example with VPC endpoint configuration:
 
 ```hcl
 module "ec2_sgw" {
@@ -205,7 +205,7 @@ module "ec2_sgw" {
 }
 ```
 
- A security group is also needed for the VPC Endpoint. In the above example, the module handles creation of the security group. However, you may use the vpc\_endpoint\_security\_group\_id variable to associate an existing Security group with the VPC endpoint. Please see this [documentation](https://docs.aws.amazon.com/filegateway/latest/files3/gateway-private-link.html) which shows the Security Group requirements for Storage Gateway VPC endpoint. In this module, the security groups are already pre-configured with the required rules with the private IP address of the storage gateway appliance. The configuration can be found in the file [sg.tf](modules/aws-sgw/sg.tf)  file.
+ A security group is also needed for the VPC Endpoint. In the above example, the module handles creation of the security group. However, you may use the vpc\_endpoint\_security\_group\_id variable to associate an existing Security group with the VPC endpoint. Please see this [documentation](https://docs.aws.amazon.com/filegateway/latest/files3/gateway-private-link.html) which shows the Security Group requirements for Storage Gateway VPC endpoint. In this module, the security groups are already pre-configured with the required rules with the private IP address of the storage gateway. The configuration can be found in the file [sg.tf](modules/aws-sgw/sg.tf)  file.
 
 S3 gateway VPC Endpoint configuration
 
@@ -220,7 +220,7 @@ resource "aws_vpc_endpoint" "s3" {
 ```
 ### Storage Gateway Security Group Configuration for EC2 Gateway
 
-You can optionally create the security group and the required rules required for your gateway appliance by setting create\_security\_group = true. You can also limit access to range of ingress CIDR blocks in your network from where you require access to the storage gateway by modifying ingress\_cidr\_blocks attributes as shown in the example below.
+You can optionally create the security group and the required rules required for your gateway by setting create\_security\_group = true. You can also limit access to range of ingress CIDR blocks in your network from where you require access to the storage gateway by modifying ingress\_cidr\_blocks attributes as shown in the example below.
 
 The module also includes the ingress\_cidr\_block\_activation variable specifically to limit access to the CIDR block of the client machine that activates the storage gateway on port 80. This Security Group rule can be optionally removed once the gateway is activated. The source code of the security group configuration can be found in modules/ec2-sgw/sg.tf file.
 
@@ -290,17 +290,17 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_gateway_ip_address"></a> [gateway\_ip\_address](#input\_gateway\_ip\_address) | IP Address of the SGW appliance in vSphere | `string` | n/a | yes |
+| <a name="input_gateway_ip_address"></a> [gateway\_ip\_address](#input\_gateway\_ip\_address) | IP Address of the Storage Gateway VM in vSphere | `string` | n/a | yes |
 | <a name="input_gateway_name"></a> [gateway\_name](#input\_gateway\_name) | Storage Gateway Name | `string` | n/a | yes |
 | <a name="input_create_vpc_endpoint"></a> [create\_vpc\_endpoint](#input\_create\_vpc\_endpoint) | Create an interface VPC endpoint for the Storage Gateway | `bool` | `false` | no |
-| <a name="input_create_vpc_endpoint_security_group"></a> [create\_vpc\_endpoint\_security\_group](#input\_create\_vpc\_endpoint\_security\_group) | Create a Security Group for the VPC Endpoint for Storage Gateway appliance. | `bool` | `false` | no |
-| <a name="input_disk_node"></a> [disk\_node](#input\_disk\_node) | Disk node on the SGW appliance where the cache disk resides on the OS | `string` | `"/dev/sdb"` | no |
-| <a name="input_disk_path"></a> [disk\_path](#input\_disk\_path) | Disk path on the SGW appliance where the cache disk resides on the OS | `string` | `"/dev/sdb"` | no |
+| <a name="input_create_vpc_endpoint_security_group"></a> [create\_vpc\_endpoint\_security\_group](#input\_create\_vpc\_endpoint\_security\_group) | Create a Security Group for the VPC Endpoint for Storage Gateway | `bool` | `false` | no |
+| <a name="input_disk_node"></a> [disk\_node](#input\_disk\_node) | Disk node on the SGW Gateway VM where the cache disk resides on the OS | `string` | `"/dev/sdb"` | no |
+| <a name="input_disk_path"></a> [disk\_path](#input\_disk\_path) | Disk path on the Storage Gateway VM where the cache disk resides on the OS | `string` | `"/dev/sdb"` | no |
 | <a name="input_domain_controllers"></a> [domain\_controllers](#input\_domain\_controllers) | List of IPv4 addresses, NetBIOS names, or host names of your domain server. If you need to specify the port number include it after the colon (“:”). For example, mydc.mydomain.com:389. | `list(any)` | `[]` | no |
 | <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | The name of the domain that you want the gateway to join | `string` | `""` | no |
 | <a name="input_domain_password"></a> [domain\_password](#input\_domain\_password) | The password for the service account on your self-managed AD domain that SGW will use to join to your AD domain | `string` | `""` | no |
 | <a name="input_domain_username"></a> [domain\_username](#input\_domain\_username) | The user name for the service account on your self-managed AD domain that SGW use to join to your AD domain | `string` | `""` | no |
-| <a name="input_gateway_private_ip_address"></a> [gateway\_private\_ip\_address](#input\_gateway\_private\_ip\_address) | Inbound IP address of Gateway VM appliance for Security Group associated with VPC Endpoint. Must be set if create\_vpc\_endpoint=true | `string` | `null` | no |
+| <a name="input_gateway_private_ip_address"></a> [gateway\_private\_ip\_address](#input\_gateway\_private\_ip\_address) | Inbound IP address of Gateway VM for Security Group associated with VPC Endpoint. Must be set if create\_vpc\_endpoint=true | `string` | `null` | no |
 | <a name="input_gateway_type"></a> [gateway\_type](#input\_gateway\_type) | Type of the gateway. Valid options are FILE\_S3, FILE\_FSX\_SMB, VTL, CACHED, STORED | `string` | `"FILE_S3"` | no |
 | <a name="input_gateway_vpc_endpoint"></a> [gateway\_vpc\_endpoint](#input\_gateway\_vpc\_endpoint) | Existing VPC endpoint address to be used when activating your gateway. This variable value will be ignored if setting create\_vpc\_endpoint=true. | `string` | `null` | no |
 | <a name="input_join_smb_domain"></a> [join\_smb\_domain](#input\_join\_smb\_domain) | Setting for controlling whether to join the Storage gateway to an Active Directory (AD) domain for Server Message Block (SMB) file shares. Variables domain\_controllers, domain\_name, password and username should also be specified to join AD domain. | `bool` | `true` | no |

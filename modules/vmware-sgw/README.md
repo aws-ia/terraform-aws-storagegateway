@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
 # AWS VMware Storage Gateway Terraform sub-module
 
-Deployes a Storage Gateway appliance in vSphere along with cache disk.
+Deployes a Storage Gateway in vSphere along with cache disk.
 
 For an end to end example on VMware, refer to the [s3filegateway-vmware](../../examples/s3filegateway-vmware/) example.
 
@@ -52,7 +52,7 @@ No modules.
 | <a name="input_local_ovf_path"></a> [local\_ovf\_path](#input\_local\_ovf\_path) | Location on the local machine where the aws storage gateway ova is hosted. | `string` | `null` | no |
 | <a name="input_memory"></a> [memory](#input\_memory) | Total amount of memory that will be configured on the storage gateway. Specified in megabytes. 16384 MB is the minimum required for a small deployment. For a medium or a large deployment increase to 32768 or 65536 | `string` | `"16384"` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of the storage gateway vm that will be created in vsphere | `string` | `"aws-storage-gateway"` | no |
-| <a name="input_os_size"></a> [os\_size](#input\_os\_size) | Size of the OS disk of the appliance. Specified in gigabytes, default is the current appliance default. Likely doesn't need to be modified | `string` | `"80"` | no |
+| <a name="input_os_size"></a> [os\_size](#input\_os\_size) | Size of the OS disk of the VM. Specified in gigabytes, default is the current VM default. Likely doesn't need to be modified | `string` | `"80"` | no |
 | <a name="input_provisioning_type"></a> [provisioning\_type](#input\_provisioning\_type) | Disk provisioning type for the vm and all attached disks | `string` | `"thick"` | no |
 | <a name="input_remote_ovf_url"></a> [remote\_ovf\_url](#input\_remote\_ovf\_url) | URL where the aws storage gateway ova is hosted. | `string` | `"https://d28e23pnuuv0hr.cloudfront.net/aws-storage-gateway-latest.ova"` | no |
 

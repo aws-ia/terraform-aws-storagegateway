@@ -67,19 +67,19 @@ variable "gateway_type" {
 
 variable "gateway_ip_address" {
   type        = string
-  description = "IP Address of the SGW appliance in vSphere"
+  description = "IP Address of the Storage Gateway VM in vSphere"
 }
 
 variable "disk_path" {
   default     = "/dev/sdb"
   type        = string
-  description = "Disk path on the SGW appliance where the cache disk resides on the OS"
+  description = "Disk path on the Storage Gateway VM where the cache disk resides on the OS"
 }
 
 variable "disk_node" {
   default     = "/dev/sdb"
   type        = string
-  description = "Disk node on the SGW appliance where the cache disk resides on the OS"
+  description = "Disk node on the SGW Gateway VM where the cache disk resides on the OS"
 }
 
 variable "domain_controllers" {
@@ -117,7 +117,7 @@ variable "vpc_endpoint_subnet_ids" {
 
 variable "create_vpc_endpoint_security_group" {
   type        = bool
-  description = "Create a Security Group for the VPC Endpoint for Storage Gateway appliance."
+  description = "Create a Security Group for the VPC Endpoint for Storage Gateway"
   default     = false
 }
 
@@ -129,7 +129,7 @@ variable "vpc_endpoint_security_group_id" {
 
 variable "gateway_private_ip_address" {
   type        = string
-  description = "Inbound IP address of Gateway VM appliance for Security Group associated with VPC Endpoint. Must be set if create_vpc_endpoint=true"
+  description = "Inbound IP address of Gateway VM for Security Group associated with VPC Endpoint. Must be set if create_vpc_endpoint=true"
   default     = null
 }
 

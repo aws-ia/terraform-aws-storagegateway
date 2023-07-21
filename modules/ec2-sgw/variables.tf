@@ -21,13 +21,13 @@ variable "vpc_id" {
 
 variable "security_group_id" {
   type        = string
-  description = "Optionally provide an existing Security Group ID to associate with EC2 Storage Gateway appliance. Variable create_security_group should be set to false to use an existing Security Group"
+  description = "Optionally provide an existing Security Group ID to associate with EC2 Storage Gateway. Variable create_security_group should be set to false to use an existing Security Group"
   default     = null
 }
 
 variable "create_security_group" {
   type        = bool
-  description = "Create a Security Group for the EC2 Storage Gateway appliance. If create_security_group=false, provide a valid security_group_id"
+  description = "Create a Security Group for the EC2 Storage Gateway. If create_security_group=false, provide a valid security_group_id"
   default     = false
 }
 
@@ -66,7 +66,7 @@ variable "timezone" {
 
 variable "ssh_key_name" {
   type        = string
-  description = "(Optional) The name of an existing EC2 Key pair for SSH access to the EC2 Storage Gateway appliance"
+  description = "(Optional) The name of an existing EC2 Key pair for SSH access to the EC2 Storage Gateway"
   default     = null
 }
 
