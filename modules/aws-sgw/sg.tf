@@ -16,7 +16,7 @@ resource "aws_security_group" "vpce_sg" {
 }
 
 resource "aws_security_group_rule" "vpce_443" {
-  for_each          = (var.create_vpc_endpoint && var.create_vpc_endpoint_security_group) ? toset(["vpce_sg"]) : toset([])
+  for_each          = (var.create_vpc_endpoint && var.create_vpc_endpoint_security_group) ? toset(["vpce_443"]) : toset([])
   type              = "ingress"
   from_port         = 443
   to_port           = 443
@@ -27,7 +27,7 @@ resource "aws_security_group_rule" "vpce_443" {
 }
 
 resource "aws_security_group_rule" "vpce_dynamic" {
-  for_each          = (var.create_vpc_endpoint && var.create_vpc_endpoint_security_group) ? toset(["vpce_sg"]) : toset([])
+  for_each          = (var.create_vpc_endpoint && var.create_vpc_endpoint_security_group) ? toset(["vpce_dynamic"]) : toset([])
   type              = "ingress"
   from_port         = 1026
   to_port           = 1028
@@ -38,7 +38,7 @@ resource "aws_security_group_rule" "vpce_dynamic" {
 }
 
 resource "aws_security_group_rule" "vpce_1031" {
-  for_each          = (var.create_vpc_endpoint && var.create_vpc_endpoint_security_group) ? toset(["vpce_sg"]) : toset([])
+  for_each          = (var.create_vpc_endpoint && var.create_vpc_endpoint_security_group) ? toset(["vpce_1031"]) : toset([])
   type              = "ingress"
   from_port         = 1031
   to_port           = 1031
@@ -49,7 +49,7 @@ resource "aws_security_group_rule" "vpce_1031" {
 }
 
 resource "aws_security_group_rule" "vpce_2222" {
-  for_each          = (var.create_vpc_endpoint && var.create_vpc_endpoint_security_group) ? toset(["vpce_sg"]) : toset([])
+  for_each          = (var.create_vpc_endpoint && var.create_vpc_endpoint_security_group) ? toset(["vpce_2222"]) : toset([])
   type              = "ingress"
   from_port         = 2222
   to_port           = 2222

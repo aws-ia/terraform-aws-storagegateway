@@ -136,7 +136,7 @@ resource "aws_security_group_rule" "smb_netbios_tcp" {
 }
 
 resource "aws_security_group_rule" "smb_netbios_udp" {
-  for_each          = var.create_security_group == true ? toset(["ec2_sg"]) : toset([])
+  for_each          = var.create_security_group == true ? toset(["smb_netbios_udp"]) : toset([])
   type              = "ingress"
   from_port         = 139
   to_port           = 139
