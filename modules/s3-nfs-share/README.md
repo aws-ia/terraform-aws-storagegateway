@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
-# AWS S3 SMB File share Terraform sub-module
+# AWS S3 NFS File share Terraform sub-module
 
-Creates an SMB file share backed by S3. For an end to end example on VMware, refer to the [s3filegateway-vmware](../../examples/s3filegateway-vmware/) example.
+Creates an NFS file share backed by S3. For an end to end example on VMware, refer to the [s3filegateway-vmware](../../examples/s3filegateway-vmware/) example.
 
 ## Requirements
 
