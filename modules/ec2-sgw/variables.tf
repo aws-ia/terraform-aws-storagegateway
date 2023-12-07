@@ -89,3 +89,9 @@ variable "cache_block_device" {
     volume_type = "gp3"
   }
 }
+
+variable "public_ip" {
+  type        = bool
+  default     = true
+  description = "Should an public Elastic IP be used?"
+}
