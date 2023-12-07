@@ -48,11 +48,11 @@ data "aws_ami" "sgw_ami" {
   }
 }
 
-resource "aws_eip" "ip" {
-
-}
+resource "aws_eip" "ip" { count = var.public_ip ? 1 : 0 }
 
 resource "aws_eip_association" "eip_assoc" {
+  count = var.public_ip ? 1 : 0
+
   instance_id   = aws_instance.ec2_sgw.id
   allocation_id = aws_eip.ip.id
 }
