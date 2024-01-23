@@ -7,7 +7,7 @@ locals {
 }
 
 resource "aws_instance" "ec2_sgw" {
-  ami                    = data.aws_ami.sgw_ami.id
+  ami                    = data.aws_ssm_parameter.sgw_ami.value
   vpc_security_group_ids = local.vpc_security_group_ids
   subnet_id              = var.subnet_id
   instance_type          = var.instance_type
@@ -39,14 +39,8 @@ resource "aws_instance" "ec2_sgw" {
   }
 }
 
-data "aws_ami" "sgw_ami" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["aws-storage-gateway-*"]
-  }
+data "aws_ssm_parameter" "sgw_ami" {
+  name = "/aws/service/storagegateway/ami/FILE_S3/latest"
 }
 
 resource "aws_eip" "ip" {
