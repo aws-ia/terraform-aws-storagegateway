@@ -7,7 +7,7 @@ locals {
 }
 
 resource "aws_instance" "ec2_sgw" {
-  ami                    = data.aws_ssm_parameter.sgw_ami.value
+  ami                    = nonsensitive(data.aws_ssm_parameter.sgw_ami.value)
   vpc_security_group_ids = local.vpc_security_group_ids
   subnet_id              = var.subnet_id
   instance_type          = var.instance_type
