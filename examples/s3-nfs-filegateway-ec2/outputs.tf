@@ -10,12 +10,12 @@ output "storage_gateway_arn" {
 
 output "nfs_file_share_arn" {
   description = "NFS File Share ARN"
-  value       = module.nfs_share.nfs_share.arn
+  value       = module.nfs_share.nfs_share_arn
 }
 
 output "nfs_file_share_path" {
   description = "NFS File Share path"
-  value       = module.nfs_share.nfs_share.path
+  value       = module.nfs_share.nfs_share_path
 }
 
 output "s3_bucket_name" {

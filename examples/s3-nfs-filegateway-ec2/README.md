@@ -7,7 +7,6 @@
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.0.0 |
 | <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 1.0.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.4.0 |
-| <a name="requirement_vsphere"></a> [vsphere](#requirement\_vsphere) | >= 2.2.0 |
 
 ## Providers
 
@@ -60,9 +59,11 @@
 
 | Name | Description |
 |------|-------------|
-| <a name="output_nfs_share_arn"></a> [nfs\_share\_arn](#output\_nfs\_share\_arn) | ARN of the created NFS share |
-| <a name="output_nfs_share_path"></a> [nfs\_share\_path](#output\_nfs\_share\_path) | NFS share mountpoint path |
-| <a name="output_s3_bucket_arn"></a> [s3\_bucket\_arn](#output\_s3\_bucket\_arn) | The ARN of the bucket. Will be of format arn:aws:s3:::bucketname. |
-| <a name="output_s3_bucket_id"></a> [s3\_bucket\_id](#output\_s3\_bucket\_id) | The name of the bucket. |
+| <a name="output_gateway_private_ip"></a> [gateway\_private\_ip](#output\_gateway\_private\_ip) | Private IP of the Storage Gateway EC2 instance |
+| <a name="output_gateway_public_ip"></a> [gateway\_public\_ip](#output\_gateway\_public\_ip) | Public IP of the Storage Gateway EC2 instance |
+| <a name="output_nfs_file_share_arn"></a> [nfs\_file\_share\_arn](#output\_nfs\_file\_share\_arn) | NFS File Share ARN |
+| <a name="output_nfs_file_share_path"></a> [nfs\_file\_share\_path](#output\_nfs\_file\_share\_path) | NFS File Share path |
+| <a name="output_s3_bucket_name"></a> [s3\_bucket\_name](#output\_s3\_bucket\_name) | S3 bucket name for the file gateway |
+| <a name="output_storage_gateway_arn"></a> [storage\_gateway\_arn](#output\_storage\_gateway\_arn) | Storage Gateway ARN |
 | <a name="output_storage_gateway_id"></a> [storage\_gateway\_id](#output\_storage\_gateway\_id) | Storage Gateway ID |
 <!-- END_TF_DOCS -->
