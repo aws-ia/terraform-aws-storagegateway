@@ -10,7 +10,7 @@ terraform {
       version = ">= 1.0.0"
     }
     vsphere = {
-      source  = "hashicorp/vsphere"
+      source  = "vmware/vsphere"
       version = ">= 2.2.0"
     }
     random = {

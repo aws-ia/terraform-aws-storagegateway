@@ -1,25 +1,35 @@
 output "storage_gateway_id" {
-  value       = module.sgw.storage_gateway.gateway_id
   description = "Storage Gateway ID"
+  value       = module.sgw.storage_gateway.gateway_id
+}
+
+output "storage_gateway_arn" {
+  description = "Storage Gateway ARN"
+  value       = module.sgw.storage_gateway.arn
+}
+
+output "nfs_file_share_arn" {
+  description = "NFS File Share ARN"
+  value       = module.nfs_share.nfs_share.arn
+}
+
+output "nfs_file_share_path" {
+  description = "NFS File Share path"
+  value       = module.nfs_share.nfs_share.path
+}
+
+output "s3_bucket_name" {
+  description = "S3 bucket name for the file gateway"
+  value       = module.s3_bucket.s3_bucket_id
+}
+
+output "gateway_public_ip" {
+  description = "Public IP of the Storage Gateway EC2 instance"
+  value       = module.ec2_sgw.public_ip
   sensitive   = true
 }
 
-output "s3_bucket_id" {
-  value       = module.s3_bucket.s3_bucket_id
-  description = "The name of the bucket."
-}
-
-output "s3_bucket_arn" {
-  value       = module.s3_bucket.s3_bucket_arn
-  description = "The ARN of the bucket. Will be of format arn:aws:s3:::bucketname."
-}
-
-output "nfs_share_arn" {
-  value       = module.nfs_share.nfs_share_arn
-  description = "ARN of the created NFS share"
-}
-
-output "nfs_share_path" {
-  value       = module.nfs_share.nfs_share_path
-  description = "NFS share mountpoint path"
+output "gateway_private_ip" {
+  description = "Private IP of the Storage Gateway EC2 instance"
+  value       = module.ec2_sgw.private_ip
 }

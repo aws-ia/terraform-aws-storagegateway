@@ -150,7 +150,7 @@ resource "aws_security_group_rule" "smb_tcp" {
   for_each          = var.create_security_group == true ? toset(["smb_tcp"]) : toset([])
   type              = "ingress"
   from_port         = 445
-  to_port           = 455
+  to_port           = 445
   protocol          = "tcp"
   description       = "SMB"
   cidr_blocks       = local.ingress_cidr_blocks_list
