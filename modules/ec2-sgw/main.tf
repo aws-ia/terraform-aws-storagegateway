@@ -4,10 +4,22 @@
 
 locals {
   vpc_security_group_ids = var.create_security_group ? [aws_security_group.ec2_sg["ec2_sg"].id] : [var.security_group_id]
+
+  # Map gateway types to SSM parameter paths (AL2023-based AMIs)
+  gateway_type_ssm_paths = {
+    "FILE_S3" = "/aws/service/storagegateway/ami/FILE_S3/latest"
+    "VTL"     = "/aws/service/storagegateway/ami/VTL/latest"
+    "CACHED"  = "/aws/service/storagegateway/ami/CACHED/latest"
+    "STORED"  = "/aws/service/storagegateway/ami/STORED/latest"
+  }
+}
+
+data "aws_ssm_parameter" "sgw_ami" {
+  name = local.gateway_type_ssm_paths[var.gateway_type]
 }
 
 resource "aws_instance" "ec2_sgw" {
-  ami                    = data.aws_ami.sgw_ami.id
+  ami                    = data.aws_ssm_parameter.sgw_ami.value
   vpc_security_group_ids = local.vpc_security_group_ids
   subnet_id              = var.subnet_id
   instance_type          = var.instance_type
@@ -35,21 +47,15 @@ resource "aws_instance" "ec2_sgw" {
       condition     = var.create_security_group || try((length(var.security_group_id) > 3 && substr(var.security_group_id, 0, 3) == "sg-"), false)
       error_message = "Please specify create_security_group = true or provide a valid Security Group ID for var.security_group_id"
     }
-  }
-}
 
-data "aws_ami" "sgw_ami" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["aws-storage-gateway-FILE_S3*"]
+    # Ignore AMI changes to prevent unexpected instance replacement
+    # To update the AMI, use: terraform apply -replace="module.ec2_sgw.aws_instance.ec2_sgw"
+    ignore_changes = [ami]
   }
 }
 
 resource "aws_eip" "ip" {
-
+  domain = "vpc"
 }
 
 resource "aws_eip_association" "eip_assoc" {

@@ -65,7 +65,7 @@ resource "aws_vpc_endpoint" "sgw_vpce" {
   for_each = var.create_vpc_endpoint ? toset(["sgw_vpce"]) : toset([])
 
   vpc_id            = var.vpc_id
-  service_name      = "com.amazonaws.${data.aws_region.current.name}.storagegateway"
+  service_name      = "com.amazonaws.${data.aws_region.current.id}.storagegateway"
   vpc_endpoint_type = "Interface"
 
   security_group_ids = [

@@ -1,6 +1,17 @@
 variable "availability_zone" {
   type        = string
-  description = "Availability zone for the Gateway EC2 Instance"
+  description = "Availability zone for the Gateway EC2 Instance. If not specified, will be determined by the subnet."
+  default     = null
+}
+
+variable "gateway_type" {
+  type        = string
+  description = "Type of the gateway. Valid options are FILE_S3, VTL, CACHED, STORED"
+  default     = "FILE_S3"
+  validation {
+    condition     = contains(["FILE_S3", "VTL", "CACHED", "STORED"], var.gateway_type)
+    error_message = "Incorrect gateway type. Valid options are FILE_S3, VTL, CACHED, STORED. Note: FILE_FSX_SMB is deprecated and not supported."
+  }
 }
 
 variable "name" {
@@ -46,6 +57,7 @@ variable "egress_cidr_blocks" {
 variable "ingress_cidr_block_activation" {
   type        = string
   description = "The CIDR block to allow ingress port 80 into your File Gateway instance for activation. For multiple CIDR blocks, please separate with comma"
+  default     = "0.0.0.0/0"
 }
 
 variable "instance_type" {

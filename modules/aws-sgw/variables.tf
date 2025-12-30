@@ -57,11 +57,11 @@ variable "timezone" {
 
 variable "gateway_type" {
   type        = string
-  description = "Type of the gateway. Valid options are FILE_S3, FILE_FSX_SMB, VTL, CACHED, STORED"
+  description = "Type of the gateway. Valid options are FILE_S3, VTL, CACHED, STORED"
   default     = "FILE_S3"
   validation {
-    condition     = contains(["FILE_S3", "FILE_FSX_SMB", "VTL", "CACHED", "STORED"], var.gateway_type)
-    error_message = "Incorrect gateway type. Valid options are FILE_S3, FILE_FSX_SMB, VTL, CACHED, STORED"
+    condition     = contains(["FILE_S3", "VTL", "CACHED", "STORED"], var.gateway_type)
+    error_message = "Incorrect gateway type. Valid options are FILE_S3, VTL, CACHED, STORED. Note: FILE_FSX_SMB is deprecated and not supported."
   }
 }
 

@@ -1,6 +1,7 @@
 variable "aws_region" {
   type        = string
   description = "Region for AWS Resources"
+  default     = "us-east-1"
 }
 
 variable "vpc_cidr_block" {
@@ -13,11 +14,12 @@ variable "client_ip_cidrs" {
   type        = string
   sensitive   = true
   description = "The IP addresses or CIDR block of clients that are allowed to access the file gateway. If there are multiple clients, please separate using commas. The value must contain valid CIDR blocks. Minimum 1 item. Maximum 100 items."
+  default     = "10.0.0.0/16"
 }
 
 variable "subnet-count" {
   type        = number
-  description = "Number of sunbets per type"
+  description = "Number of subnets per type"
   default     = 1
 }
 
@@ -30,11 +32,12 @@ variable "ingress_cidr_blocks" {
 variable "ingress_cidr_block_activation" {
   type        = string
   description = "The CIDR block to allow ingress port 80 into your File Gateway instance for activation. For multiple CIDR blocks, please separate with comma"
+  default     = "0.0.0.0/0"
 }
 
 variable "ssh_public_key_path" {
   type        = string
-  description = "(Optional) Absolute file path to the the public key for the EC2 Key pair. If ommitted, the EC2 key pair resource will not be created"
+  description = "(Optional) Absolute file path to the public key for the EC2 Key pair. If omitted, the EC2 key pair resource will not be created"
   default     = ""
 }
 
