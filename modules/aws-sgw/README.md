@@ -16,15 +16,15 @@ The module requires a Gateway Type to be declared with a default set to FILE\_S3
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.7 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.0.0 |
-| <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 0.24.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.0.0 |
+| <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 1.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.0.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0.0 |
 
 ## Modules
 
@@ -60,7 +60,7 @@ No modules.
 | <a name="input_domain_password"></a> [domain\_password](#input\_domain\_password) | The password for the service account on your self-managed AD domain that SGW will use to join to your AD domain | `string` | `""` | no |
 | <a name="input_domain_username"></a> [domain\_username](#input\_domain\_username) | The user name for the service account on your self-managed AD domain that SGW use to join to your AD domain | `string` | `""` | no |
 | <a name="input_gateway_private_ip_address"></a> [gateway\_private\_ip\_address](#input\_gateway\_private\_ip\_address) | Inbound IP address of the Storage Gateway VM for Security Group associated with VPC Endpoint. Must be set if create\_vpc\_endpoint=true | `string` | `null` | no |
-| <a name="input_gateway_type"></a> [gateway\_type](#input\_gateway\_type) | Type of the gateway. Valid options are FILE\_S3, FILE\_FSX\_SMB, VTL, CACHED, STORED | `string` | `"FILE_S3"` | no |
+| <a name="input_gateway_type"></a> [gateway\_type](#input\_gateway\_type) | Type of the gateway. Valid options are FILE\_S3, VTL, CACHED, STORED | `string` | `"FILE_S3"` | no |
 | <a name="input_gateway_vpc_endpoint"></a> [gateway\_vpc\_endpoint](#input\_gateway\_vpc\_endpoint) | Existing VPC endpoint address to be used when activating your gateway. This variable value will be ignored if setting create\_vpc\_endpoint=true. | `string` | `null` | no |
 | <a name="input_join_smb_domain"></a> [join\_smb\_domain](#input\_join\_smb\_domain) | Setting for controlling whether to join the Storage gateway to an Active Directory (AD) domain for Server Message Block (SMB) file shares. Variables domain\_controllers, domain\_name, password and username should also be specified to join AD domain. | `bool` | `true` | no |
 | <a name="input_organizational_unit"></a> [organizational\_unit](#input\_organizational\_unit) | The organizational unit (OU) is a container in an Active Directory that can hold users, groups, computers, and other OUs and this parameter specifies the OU that the gateway will join within the AD domain. | `string` | `""` | no |

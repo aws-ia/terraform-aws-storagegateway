@@ -3,18 +3,18 @@
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.7 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.0 |
-| <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 0.24.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | >=3.4.0 |
-| <a name="requirement_vsphere"></a> [vsphere](#requirement\_vsphere) | >=2.2.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.0.0 |
+| <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 1.0.0 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.4.0 |
+| <a name="requirement_vsphere"></a> [vsphere](#requirement\_vsphere) | >= 2.2.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.9.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.5.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | >= 3.4.0 |
 
 ## Modules
 
@@ -47,13 +47,13 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | Region for AWS Resources | `string` | n/a | yes |
-| <a name="input_client_ip_cidrs"></a> [client\_ip\_cidrs](#input\_client\_ip\_cidrs) | The IP addresses or CIDR block of clients that are allowed to access the file gateway. If there are multiple clients, please separate using commas. The value must contain valid CIDR blocks. Minimum 1 item. Maximum 100 items. | `string` | n/a | yes |
-| <a name="input_ingress_cidr_block_activation"></a> [ingress\_cidr\_block\_activation](#input\_ingress\_cidr\_block\_activation) | The CIDR block to allow ingress port 80 into your File Gateway instance for activation. For multiple CIDR blocks, please separate with comma | `string` | n/a | yes |
+| <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | Region for AWS Resources | `string` | `"us-east-1"` | no |
+| <a name="input_client_ip_cidrs"></a> [client\_ip\_cidrs](#input\_client\_ip\_cidrs) | The IP addresses or CIDR block of clients that are allowed to access the file gateway. If there are multiple clients, please separate using commas. The value must contain valid CIDR blocks. Minimum 1 item. Maximum 100 items. | `string` | `"10.0.0.0/16"` | no |
+| <a name="input_ingress_cidr_block_activation"></a> [ingress\_cidr\_block\_activation](#input\_ingress\_cidr\_block\_activation) | The CIDR block to allow ingress port 80 into your File Gateway instance for activation. For multiple CIDR blocks, please separate with comma | `string` | `"0.0.0.0/0"` | no |
 | <a name="input_ingress_cidr_blocks"></a> [ingress\_cidr\_blocks](#input\_ingress\_cidr\_blocks) | The CIDR blocks to allow ingress into your File Gateway instance for NFS and SMB client access. For multiple CIDR blocks, please separate with comma | `string` | `"10.0.0.0/16"` | no |
 | <a name="input_ssh_key_name"></a> [ssh\_key\_name](#input\_ssh\_key\_name) | (Optional) The name of an existing EC2 Key pair for SSH access to the EC2 Storage Gateway | `string` | `null` | no |
-| <a name="input_ssh_public_key_path"></a> [ssh\_public\_key\_path](#input\_ssh\_public\_key\_path) | (Optional) Absolute file path to the the public key for the EC2 Key pair. If ommitted, the EC2 key pair resource will not be created | `string` | `""` | no |
-| <a name="input_subnet-count"></a> [subnet-count](#input\_subnet-count) | Number of sunbets per type | `number` | `1` | no |
+| <a name="input_ssh_public_key_path"></a> [ssh\_public\_key\_path](#input\_ssh\_public\_key\_path) | (Optional) Absolute file path to the public key for the EC2 Key pair. If omitted, the EC2 key pair resource will not be created | `string` | `""` | no |
+| <a name="input_subnet-count"></a> [subnet-count](#input\_subnet-count) | Number of subnets per type | `number` | `1` | no |
 | <a name="input_vpc_cidr_block"></a> [vpc\_cidr\_block](#input\_vpc\_cidr\_block) | VPC CIDR block for the creation of example VPC and subnets | `string` | `"10.0.0.0/16"` | no |
 
 ## Outputs
