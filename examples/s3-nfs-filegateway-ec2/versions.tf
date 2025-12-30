@@ -9,10 +9,6 @@ terraform {
       source  = "hashicorp/awscc"
       version = ">= 1.0.0"
     }
-    vsphere = {
-      source  = "vmware/vsphere"
-      version = ">= 2.2.0"
-    }
     random = {
       source  = "hashicorp/random"
       version = ">= 3.4.0"
