@@ -28,7 +28,9 @@ resource "aws_instance" "ec2_sgw" {
   availability_zone      = var.availability_zone
 
   metadata_options {
-    http_tokens = "required"
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
   }
 
   root_block_device {
