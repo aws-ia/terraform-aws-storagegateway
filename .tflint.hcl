@@ -3,13 +3,13 @@
 
 plugin "aws" {
   enabled = true
-  version = "0.18.0"
+  version = "0.32.0"
   source  = "github.com/terraform-linters/tflint-ruleset-aws"
 }
 
 config {
-  module = true
-  force  = false
+  call_module_type = "all"
+  force            = false
 }
 
 rule "terraform_required_providers" {

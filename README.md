@@ -125,7 +125,7 @@ module "sgw" {
 ```hcl
 module "s3_bucket" {
   source                   = "terraform-aws-modules/s3-bucket/aws"
-  version                  = ">=3.5.0"
+  version                  = "~> 5.0"
   bucket                   = "bucket-name"
   control_object_ownership = true
   object_ownership         = "BucketOwnerEnforced"
@@ -262,7 +262,7 @@ If you are interested in contributing to the Storage Gateway module, see the [Co
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.0.0 |
 | <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 1.0.0 |
 
@@ -281,6 +281,11 @@ No modules.
 | Name | Type |
 |------|------|
 | [aws_security_group.vpce_sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_security_group_rule.vpce_1031](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.vpce_2222](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.vpce_443](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.vpce_dynamic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.vpce_egress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_storagegateway_cache.sgw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/storagegateway_cache) | resource |
 | [aws_storagegateway_gateway.mysgw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/storagegateway_gateway) | resource |
 | [aws_vpc_endpoint.sgw_vpce](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_endpoint) | resource |
@@ -295,13 +300,13 @@ No modules.
 | <a name="input_gateway_name"></a> [gateway\_name](#input\_gateway\_name) | Storage Gateway Name | `string` | n/a | yes |
 | <a name="input_create_vpc_endpoint"></a> [create\_vpc\_endpoint](#input\_create\_vpc\_endpoint) | Create an interface VPC endpoint for the Storage Gateway | `bool` | `false` | no |
 | <a name="input_create_vpc_endpoint_security_group"></a> [create\_vpc\_endpoint\_security\_group](#input\_create\_vpc\_endpoint\_security\_group) | Create a Security Group for the VPC Endpoint for Storage Gateway | `bool` | `false` | no |
-| <a name="input_disk_node"></a> [disk\_node](#input\_disk\_node) | Disk node on the SGW Gateway VM where the cache disk resides on the OS | `string` | `"/dev/sdb"` | no |
+| <a name="input_disk_node"></a> [disk\_node](#input\_disk\_node) | Disk node on the Storage Gateway VM where the cache disk resides on the OS | `string` | `"/dev/sdb"` | no |
 | <a name="input_disk_path"></a> [disk\_path](#input\_disk\_path) | Disk path on the Storage Gateway VM where the cache disk resides on the OS | `string` | `"/dev/sdb"` | no |
 | <a name="input_domain_controllers"></a> [domain\_controllers](#input\_domain\_controllers) | List of IPv4 addresses, NetBIOS names, or host names of your domain server. If you need to specify the port number include it after the colon (“:”). For example, mydc.mydomain.com:389. | `list(any)` | `[]` | no |
 | <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | The name of the domain that you want the gateway to join | `string` | `""` | no |
 | <a name="input_domain_password"></a> [domain\_password](#input\_domain\_password) | The password for the service account on your self-managed AD domain that SGW will use to join to your AD domain | `string` | `""` | no |
 | <a name="input_domain_username"></a> [domain\_username](#input\_domain\_username) | The user name for the service account on your self-managed AD domain that SGW use to join to your AD domain | `string` | `""` | no |
-| <a name="input_gateway_private_ip_address"></a> [gateway\_private\_ip\_address](#input\_gateway\_private\_ip\_address) | Inbound IP address of Gateway VM for Security Group associated with VPC Endpoint. Must be set if create\_vpc\_endpoint=true | `string` | `null` | no |
+| <a name="input_gateway_private_ip_address"></a> [gateway\_private\_ip\_address](#input\_gateway\_private\_ip\_address) | Inbound IP address of the Storage Gateway VM for Security Group associated with VPC Endpoint. Must be set if create\_vpc\_endpoint=true | `string` | `null` | no |
 | <a name="input_gateway_type"></a> [gateway\_type](#input\_gateway\_type) | Type of the gateway. Valid options are FILE\_S3, VTL, CACHED, STORED | `string` | `"FILE_S3"` | no |
 | <a name="input_gateway_vpc_endpoint"></a> [gateway\_vpc\_endpoint](#input\_gateway\_vpc\_endpoint) | Existing VPC endpoint address to be used when activating your gateway. This variable value will be ignored if setting create\_vpc\_endpoint=true. | `string` | `null` | no |
 | <a name="input_join_smb_domain"></a> [join\_smb\_domain](#input\_join\_smb\_domain) | Setting for controlling whether to join the Storage gateway to an Active Directory (AD) domain for Server Message Block (SMB) file shares. Variables domain\_controllers, domain\_name, password and username should also be specified to join AD domain. | `bool` | `true` | no |

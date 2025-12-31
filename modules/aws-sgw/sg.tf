@@ -58,3 +58,16 @@ resource "aws_security_group_rule" "vpce_2222" {
   cidr_blocks       = ["${var.gateway_private_ip_address}/32"]
   security_group_id = aws_security_group.vpce_sg["vpce_sg"].id
 }
+
+#outbound connections for VPC endpoint to reach to AWS services
+#tfsec:ignore:aws-ec2-no-public-egress-sgr
+resource "aws_security_group_rule" "vpce_egress" {
+  for_each          = (var.create_vpc_endpoint && var.create_vpc_endpoint_security_group) ? toset(["vpce_egress"]) : toset([])
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  description       = "VPC Endpoint egress rule"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.vpce_sg["vpce_sg"].id
+}

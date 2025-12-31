@@ -79,7 +79,7 @@ variable "disk_path" {
 variable "disk_node" {
   default     = "/dev/sdb"
   type        = string
-  description = "Disk node on the SGW Gateway VM where the cache disk resides on the OS"
+  description = "Disk node on the Storage Gateway VM where the cache disk resides on the OS"
 }
 
 variable "domain_controllers" {
@@ -129,7 +129,7 @@ variable "vpc_endpoint_security_group_id" {
 
 variable "gateway_private_ip_address" {
   type        = string
-  description = "Inbound IP address of Gateway VM for Security Group associated with VPC Endpoint. Must be set if create_vpc_endpoint=true"
+  description = "Inbound IP address of the Storage Gateway VM for Security Group associated with VPC Endpoint. Must be set if create_vpc_endpoint=true"
   default     = null
 }
 

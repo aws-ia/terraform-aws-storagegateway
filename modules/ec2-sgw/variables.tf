@@ -90,16 +90,6 @@ variable "instance_type" {
   }
 }
 
-variable "timezone" {
-  type        = string
-  description = "Time zone for the gateway. The time zone is of the format GMT, GMT-hr:mm, or GMT+hr:mm.For example, GMT-4:00 indicates the time is 4 hours behind GMT. Avoid prefixing with 0"
-  default     = "GMT"
-  validation {
-    condition     = can(regex("^GMT[+-](([1-9]|1[0-2]):([0-5][0-9]))|GMT$", var.timezone))
-    error_message = "Time zone for the gateway. The time zone is of the format GMT, GMT-hr:mm, or GMT+hr:mm."
-  }
-}
-
 variable "ssh_key_name" {
   type        = string
   description = "(Optional) The name of an existing EC2 Key pair for SSH access to the EC2 Storage Gateway"
