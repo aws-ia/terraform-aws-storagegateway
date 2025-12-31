@@ -104,7 +104,7 @@ resource "aws_vpc_endpoint" "s3" {
 #tfsec:ignore:aws-s3-enable-versioning
 module "s3_bucket" {
   source                   = "terraform-aws-modules/s3-bucket/aws"
-  version                  = ">=3.5.0"
+  version                  = "~> 4.0"
   bucket                   = lower("${random_pet.name.id}-${module.sgw.storage_gateway.gateway_id}-s3-fgw")
   control_object_ownership = true
   object_ownership         = "BucketOwnerEnforced"
@@ -155,7 +155,7 @@ module "nfs_share" {
 #tfsec:ignore:aws-s3-enable-bucket-logging
 module "log_delivery_bucket" {
   source                   = "terraform-aws-modules/s3-bucket/aws"
-  version                  = ">=3.5.0"
+  version                  = "~> 4.0"
   bucket                   = lower("${random_pet.name.id}-${module.sgw.storage_gateway.gateway_id}-s3-fgw-logs")
   control_object_ownership = true
   object_ownership         = "BucketOwnerEnforced"
