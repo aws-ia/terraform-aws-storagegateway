@@ -46,7 +46,7 @@ module "vsphere" {
 # Create S3 bucket for File Gateway 
 #######################################
 
-#Versioning disabled as per guidnance from the create SMB file share documentation. Read https://docs.aws.amazon.com/filegateway/latest/files3/CreatingAnSMBFileShare.html
+#Versioning disabled as per guidance from the create SMB file share documentation. Read https://docs.aws.amazon.com/filegateway/latest/files3/CreatingAnSMBFileShare.html
 #tfsec:ignore:aws-s3-enable-versioning
 module "s3_bucket" {
   source                   = "terraform-aws-modules/s3-bucket/aws"
@@ -94,7 +94,7 @@ module "smb_share" {
 # Create S3 bucket for Server Access Logs (Optional if already exists)
 #######################################################################
 
-#TFSEC Bucket logging for services access logs supressed. 
+#TFSEC Bucket logging for services access logs suppressed. 
 #tfsec:ignore:aws-s3-enable-bucket-logging
 module "log_delivery_bucket" {
   source                   = "terraform-aws-modules/s3-bucket/aws"
@@ -131,7 +131,7 @@ resource "aws_kms_key" "sgw" {
 # Create log group for SMB File share (Optional if already created)
 #####################################################################
 
-#TFSEC Low warning for cloudwatch-log-group customer key supressed. 
+#TFSEC Low warning for cloudwatch-log-group customer key suppressed. 
 #tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "smbshare" {
   name = "${local.share_name}-auditlogs"
@@ -185,7 +185,7 @@ data "aws_iam_policy_document" "bucket_sgw" {
       "s3:ListBucketMultipartUploads"
     ]
   }
-  #TFSEC Warning for /* in the S3 bucket prefix supressed as the objects are unknown before creation.
+  #TFSEC Warning for /* in the S3 bucket prefix suppressed as the objects are unknown before creation.
   #tfsec:ignore:aws-iam-no-policy-wildcards 
   statement {
     sid       = "AllowStorageGatewayBucketObjectLevelAccess"
