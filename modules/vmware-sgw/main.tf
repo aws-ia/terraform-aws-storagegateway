@@ -27,6 +27,20 @@ data "vsphere_network" "network" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
+# Read OVA properties to get correct guest_id and other settings
+data "vsphere_ovf_vm_template" "sgw" {
+  name              = var.name
+  resource_pool_id  = data.vsphere_compute_cluster.cluster.resource_pool_id
+  datastore_id      = data.vsphere_datastore.datastore.id
+  host_system_id    = data.vsphere_host.host.id
+  local_ovf_path    = var.local_ovf_path
+  remote_ovf_url    = var.local_ovf_path == null ? var.remote_ovf_url : null
+  disk_provisioning = var.provisioning_type
+  ovf_network_map = {
+    "VM Network" = data.vsphere_network.network.id
+  }
+}
+
 ################################################################################
 # Creating vSphere virtual machine
 ################################################################################
@@ -39,6 +53,8 @@ resource "vsphere_virtual_machine" "vm" {
   name                       = var.name
   num_cpus                   = var.cpus
   memory                     = var.memory
+  guest_id                   = data.vsphere_ovf_vm_template.sgw.guest_id
+  firmware                   = data.vsphere_ovf_vm_template.sgw.firmware
   wait_for_guest_net_timeout = 1
   sync_time_with_host        = true
 
@@ -64,12 +80,10 @@ resource "vsphere_virtual_machine" "vm" {
   }
 
   ovf_deploy {
-    local_ovf_path    = var.local_ovf_path != null ? var.local_ovf_path : null
-    remote_ovf_url    = var.remote_ovf_url != null && var.local_ovf_path == null ? var.remote_ovf_url : null
-    disk_provisioning = var.provisioning_type
-    ovf_network_map = {
-      "eth0" = data.vsphere_network.network.id
-    }
+    local_ovf_path       = var.local_ovf_path != null ? var.local_ovf_path : null
+    remote_ovf_url       = var.remote_ovf_url != null && var.local_ovf_path == null ? var.remote_ovf_url : null
+    disk_provisioning    = data.vsphere_ovf_vm_template.sgw.disk_provisioning
+    ovf_network_map      = data.vsphere_ovf_vm_template.sgw.ovf_network_map
   }
 
   lifecycle {

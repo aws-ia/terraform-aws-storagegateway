@@ -29,6 +29,13 @@ variable "domain_controllers" {
   description = "Comma separated list of domain controllers."
 }
 
+variable "organizational_unit" {
+  type        = string
+  default     = ""
+  sensitive   = true
+  description = "The organizational unit (OU) is a container in an Active Directory that can hold users, groups and computers."
+}
+
 variable "allow_unverified_ssl" {
   type        = bool
   description = "Boolean that can be set to true to disable SSL certificate verification."

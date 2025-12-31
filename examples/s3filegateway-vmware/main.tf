@@ -16,16 +16,17 @@ locals {
 ######################################
 
 module "sgw" {
-  depends_on         = [module.vsphere]
-  source             = "../../modules/aws-sgw"
-  gateway_name       = random_pet.name.id
-  gateway_ip_address = module.vsphere.vm_ip
-  join_smb_domain    = true
-  domain_name        = var.domain_name
-  domain_username    = var.domain_username
-  domain_password    = var.domain_password
-  domain_controllers = var.domain_controllers
-  gateway_type       = "FILE_S3"
+  depends_on          = [module.vsphere]
+  source              = "../../modules/aws-sgw"
+  gateway_name        = random_pet.name.id
+  gateway_ip_address  = module.vsphere.vm_ip
+  join_smb_domain     = true
+  domain_name         = var.domain_name
+  domain_username     = var.domain_username
+  domain_password     = var.domain_password
+  domain_controllers  = var.domain_controllers
+  organizational_unit = var.organizational_unit
+  gateway_type        = "FILE_S3"
 }
 
 #######################################
