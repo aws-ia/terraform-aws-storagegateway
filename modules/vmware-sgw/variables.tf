@@ -54,7 +54,7 @@ variable "cache_size" {
 }
 
 variable "remote_ovf_url" {
-  default     = "https://dd958of58tzpr.cloudfront.net/aws-storage-gateway-file-s3.ova"
+  default     = "https://dd958of58tzpr.cloudfront.net/aws-storage-gateway-file-s3-gateway-v2-x86_64.ova"
   type        = string
   description = "URL where the aws storage gateway ova is hosted."
 }
