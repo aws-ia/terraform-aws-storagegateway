@@ -30,13 +30,14 @@ module "sgw" {
 #######################################
 
 module "vsphere" {
-  source     = "../../modules/vmware-sgw"
-  datastore  = var.datastore
-  datacenter = var.datacenter
-  network    = var.network
-  cluster    = var.cluster
-  host       = var.host
-  name       = "${random_pet.name.id}-gateway"
+  source            = "../../modules/vmware-sgw"
+  datastore         = var.datastore
+  datacenter        = var.datacenter
+  network           = var.network
+  cluster           = var.cluster
+  host              = var.host
+  name              = "${random_pet.name.id}-gateway"
+  deployment_option = "new-gateway"
 }
 
 #######################################

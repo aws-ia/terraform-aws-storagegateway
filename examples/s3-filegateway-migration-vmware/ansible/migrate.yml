@@ -1,0 +1,615 @@
+---
+# ###############################################################################
+# Storage Gateway VMware Migration Playbook
+# Automates Method 1 migration for VMware-hosted gateways
+# https://docs.aws.amazon.com/filegateway/latest/files3/migrate-data.html
+# ###############################################################################
+
+- name: Execute Storage Gateway VMware Migration
+  hosts: localhost
+  gather_facts: true
+  vars:
+    # Passed from Terraform outputs or environment variables
+    old_vm_name: "{{ lookup('env', 'OLD_VM_NAME') }}"
+    new_vm_name: "{{ lookup('env', 'NEW_VM_NAME') }}"
+    gateway_id: "{{ lookup('env', 'GATEWAY_ID') }}"
+    new_gateway_ip: "{{ lookup('env', 'NEW_GATEWAY_IP') }}"
+    aws_region: "{{ lookup('env', 'AWS_REGION') | default('us-east-1', true) }}"
+
+    # vSphere connection
+    vcenter_hostname: "{{ lookup('env', 'VSPHERE_SERVER') }}"
+    vcenter_username: "{{ lookup('env', 'VSPHERE_USER') }}"
+    vcenter_password: "{{ lookup('env', 'VSPHERE_PASSWORD') }}"
+    vcenter_datacenter: "{{ lookup('env', 'VSPHERE_DATACENTER') }}"
+    vcenter_validate_certs: "{{ lookup('env', 'VSPHERE_VALIDATE_CERTS') | default('false', true) | bool }}"
+
+    migration_timeout: 600
+
+  tasks:
+    - name: Validate required variables
+      assert:
+        that:
+          - old_vm_name is defined and old_vm_name != ""
+          - new_vm_name is defined and new_vm_name != ""
+          - gateway_id is defined and gateway_id != ""
+          - new_gateway_ip is defined and new_gateway_ip != ""
+          - vcenter_hostname is defined and vcenter_hostname != ""
+          - vcenter_username is defined and vcenter_username != ""
+          - vcenter_password is defined and vcenter_password != ""
+          - vcenter_datacenter is defined and vcenter_datacenter != ""
+        fail_msg: >
+          Required environment variables are missing. Set OLD_VM_NAME, NEW_VM_NAME,
+          GATEWAY_ID, NEW_GATEWAY_IP, VSPHERE_SERVER, VSPHERE_USER, VSPHERE_PASSWORD,
+          VSPHERE_DATACENTER
+
+    ############################################################################
+    # Step 1: Gather Gateway Information from AWS
+    ############################################################################
+
+    - name: Get AWS account ID
+      command: aws sts get-caller-identity --query Account --output text --region {{ aws_region }}
+      register: aws_account_id_result
+      changed_when: false
+
+    - name: Construct gateway ARN
+      set_fact:
+        gateway_arn: "arn:aws:storagegateway:{{ aws_region }}:{{ aws_account_id_result.stdout }}:gateway/{{ gateway_id }}"
+
+    - name: Fetch gateway information from AWS Storage Gateway API
+      command: >
+        aws storagegateway describe-gateway-information
+        --gateway-arn "{{ gateway_arn }}"
+        --region "{{ aws_region }}"
+        --output json
+      register: gateway_info_raw
+      changed_when: false
+
+    - name: Parse gateway information
+      set_fact:
+        gateway_info: "{{ gateway_info_raw.stdout | from_json }}"
+
+    - name: Extract gateway name for CloudWatch dimensions
+      set_fact:
+        gateway_name: "{{ gateway_info.GatewayName }}"
+
+    - name: Display migration information
+      debug:
+        msg:
+          - "Starting Storage Gateway VMware Migration"
+          - "Gateway ID: {{ gateway_id }}"
+          - "Gateway Name: {{ gateway_name }}"
+          - "Old VM: {{ old_vm_name }}"
+          - "New VM: {{ new_vm_name }}"
+          - "New Gateway IP: {{ new_gateway_ip }}"
+          - "Region: {{ aws_region }}"
+
+    ############################################################################
+    # Step 2: Check Cache Dirty Percentage
+    ############################################################################
+
+    - name: Calculate CloudWatch time range
+      command: >
+        python3 -c "from datetime import datetime, timedelta; import json;
+        now=datetime.utcnow();
+        print(json.dumps({'start': (now - timedelta(minutes=30)).strftime('%Y-%m-%dT%H:%M:%S'), 'end': now.strftime('%Y-%m-%dT%H:%M:%S')}))"
+      register: cw_time_range_raw
+      changed_when: false
+
+    - name: Set CloudWatch time range facts
+      set_fact:
+        cw_start_time: "{{ (cw_time_range_raw.stdout | from_json).start }}"
+        cw_end_time: "{{ (cw_time_range_raw.stdout | from_json).end }}"
+
+    - name: Get cache dirty percentage metric from CloudWatch
+      command: >
+        aws cloudwatch get-metric-statistics
+        --namespace AWS/StorageGateway
+        --metric-name CachePercentDirty
+        --dimensions Name=GatewayId,Value={{ gateway_id }} Name=GatewayName,Value={{ gateway_name }}
+        --start-time {{ cw_start_time }}
+        --end-time {{ cw_end_time }}
+        --period 300
+        --statistics Average
+        --region {{ aws_region }}
+        --output json
+      register: cache_dirty_metric
+      changed_when: false
+      failed_when: false
+
+    - name: Parse cache dirty metric
+      set_fact:
+        cache_dirty_data: "{{ cache_dirty_metric.stdout | from_json }}"
+      when: cache_dirty_metric.rc == 0
+
+    - name: Extract latest cache dirty percentage
+      set_fact:
+        cache_dirty_percent: "{{ cache_dirty_data.Datapoints | sort(attribute='Timestamp') | last | default({'Average': 0}) }}"
+      when: cache_dirty_metric.rc == 0 and cache_dirty_data.Datapoints | length > 0
+
+    - name: Display cache dirty percentage
+      debug:
+        msg:
+          - "=========================================="
+          - "Cache Dirty Check"
+          - "=========================================="
+          - "Current Cache Dirty: {{ cache_dirty_percent.Average | default('N/A') }}%"
+          - ""
+          - "RECOMMENDATION:"
+          - "  0% = Safe to proceed (all data uploaded to S3)"
+          - "  >0% = Migration will abort - wait for cache to flush"
+          - "=========================================="
+      when: cache_dirty_metric.rc == 0 and cache_dirty_data.Datapoints | length > 0
+
+    - name: Fail if cache dirty metric unavailable
+      fail:
+        msg: |
+          ABORTING: Unable to retrieve CachePercentDirty metric for gateway {{ gateway_id }}.
+          Verify the gateway is running and the metric is available in CloudWatch.
+      when: cache_dirty_metric.rc != 0 or (cache_dirty_data.Datapoints | default([]) | length == 0)
+
+    - name: Fail if cache dirty percentage is > 0%
+      fail:
+        msg: |
+          ABORTING: Cache dirty is {{ cache_dirty_percent.Average | float | round(1) }}% (above 0%).
+          Wait for cache to flush and re-run when CachePercentDirty is 0%.
+      when: cache_dirty_metric.rc == 0 and cache_dirty_data.Datapoints | length > 0 and cache_dirty_percent.Average | default(0) | float > 0
+
+    - name: Confirm cache is clean
+      debug:
+        msg: "Cache dirty is 0% - safe to proceed with migration"
+      when: cache_dirty_metric.rc == 0 and cache_dirty_data.Datapoints | length > 0 and cache_dirty_percent.Average | default(0) | float == 0
+
+    ############################################################################
+    # Step 3: Verify Port 80 Connectivity to New Gateway VM
+    ############################################################################
+
+    - name: Check port 80 connectivity to new gateway
+      wait_for:
+        host: "{{ new_gateway_ip }}"
+        port: 80
+        timeout: 30
+        state: started
+      register: port_check
+
+    - name: Display port 80 connectivity result
+      debug:
+        msg:
+          - "=========================================="
+          - "Port 80 Connectivity Check"
+          - "=========================================="
+          - "Gateway IP: {{ new_gateway_ip }}"
+          - "Status: {{ 'REACHABLE' if port_check is succeeded else 'UNREACHABLE' }}"
+          - "=========================================="
+
+    - name: Fail if port 80 is not reachable
+      fail:
+        msg: |
+          Port 80 is not reachable on {{ new_gateway_ip }}.
+          The migration API requires HTTP access on port 80 to the new gateway VM.
+          Verify firewall rules and that the new VM is running.
+      when: port_check is failed
+
+    ############################################################################
+    # Step 4: Discover Disks on Old Gateway VM
+    ############################################################################
+
+    - name: Gather old VM facts
+      community.vmware.vmware_guest_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ vcenter_datacenter }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        name: "{{ old_vm_name }}"
+      register: old_vm_info
+
+    - name: Extract disk information from old VM
+      set_fact:
+        old_vm_disks: "{{ old_vm_info.instance.hw_files | select('match', '.*\\.vmdk$') | reject('match', '.*-flat\\.vmdk$') | list }}"
+
+    - name: Display old VM disk configuration
+      debug:
+        msg:
+          - "=========================================="
+          - "Old Gateway VM Disk Configuration"
+          - "=========================================="
+          - "VM Name: {{ old_vm_name }}"
+          - "Power State: {{ old_vm_info.instance.hw_power_status }}"
+          - "CPUs: {{ old_vm_info.instance.hw_processor_count }}"
+          - "Memory: {{ old_vm_info.instance.hw_memtotal_mb }} MB"
+          - "Disks found: {{ old_vm_disks | length }}"
+
+    - name: Display each disk
+      debug:
+        msg: "  Disk {{ ansible_loop.index }}: {{ item }}"
+      loop: "{{ old_vm_disks }}"
+      loop_control:
+        extended: true
+
+    - name: Validate disk count
+      assert:
+        that:
+          - old_vm_disks | length >= 2
+        fail_msg: "Expected at least 2 disks (OS + cache) on old VM, found {{ old_vm_disks | length }}"
+        success_msg: "Found {{ old_vm_disks | length }} disks: 1 OS + {{ old_vm_disks | length - 1 }} cache disk(s)"
+
+    - name: Separate root and cache disks
+      set_fact:
+        old_root_vmdk: "{{ old_vm_disks[0] }}"
+        old_cache_vmdks: "{{ old_vm_disks[1:] }}"
+
+    - name: Display disk classification
+      debug:
+        msg:
+          - "ROOT DISK: {{ old_root_vmdk }}"
+          - "CACHE DISKS ({{ old_cache_vmdks | length }}):"
+
+    - name: Display each cache disk
+      debug:
+        msg: "  Cache Disk {{ ansible_loop.index }}: {{ item }}"
+      loop: "{{ old_cache_vmdks }}"
+      loop_control:
+        extended: true
+
+    ############################################################################
+    # Step 5: Check for Recovery Mode (disks already moved)
+    ############################################################################
+
+    - name: Gather new VM facts
+      community.vmware.vmware_guest_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ vcenter_datacenter }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        name: "{{ new_vm_name }}"
+      register: new_vm_info
+
+    - name: Check new VM disk count for recovery mode
+      set_fact:
+        new_vm_disk_count: "{{ new_vm_info.instance.hw_files | select('match', '.*\\.vmdk$') | reject('match', '.*-flat\\.vmdk$') | list | length }}"
+
+    - name: Determine if in recovery mode
+      set_fact:
+        recovery_mode: "{{ (old_vm_info.instance.hw_power_status == 'poweredOff') and (new_vm_disk_count | int > 1) }}"
+
+    - name: Display recovery mode status
+      debug:
+        msg:
+          - "RECOVERY MODE DETECTED: Old VM is powered off and new VM has {{ new_vm_disk_count }} disk(s)"
+          - "Skipping power-off and disk migration steps, proceeding to migration trigger"
+      when: recovery_mode | bool
+
+    ############################################################################
+    # Step 6: Power Off Old Gateway VM
+    ############################################################################
+
+    - name: Power off old gateway VM
+      community.vmware.vmware_guest_powerstate:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        name: "{{ old_vm_name }}"
+        state: powered-off
+      when: not recovery_mode | bool and old_vm_info.instance.hw_power_status != 'poweredOff'
+
+    - name: Wait for old VM to fully power off
+      community.vmware.vmware_guest_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ vcenter_datacenter }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        name: "{{ old_vm_name }}"
+      register: old_vm_power_check
+      until: old_vm_power_check.instance.hw_power_status == 'poweredOff'
+      retries: 30
+      delay: 10
+      when: not recovery_mode | bool
+
+    - name: Confirm old VM is powered off
+      debug:
+        msg: "Old gateway VM {{ old_vm_name }} is now powered off"
+      when: not recovery_mode | bool
+
+    ############################################################################
+    # Step 7: Detach Disks from Old VM and Attach to New VM
+    ############################################################################
+
+    # Detach all disks from old VM (root + cache)
+    # We detach in reverse order to avoid SCSI unit number conflicts
+    - name: Detach cache disks from old VM
+      community.vmware.vmware_guest_disk:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ vcenter_datacenter }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        name: "{{ old_vm_name }}"
+        disk:
+          - state: absent
+            destroy: false
+            scsi_controller: 0
+            unit_number: "{{ (old_vm_disks | length) - ansible_loop.index }}"
+      loop: "{{ old_cache_vmdks | reverse | list }}"
+      loop_control:
+        extended: true
+      when: not recovery_mode | bool
+
+    - name: Detach root disk from old VM
+      community.vmware.vmware_guest_disk:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ vcenter_datacenter }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        name: "{{ old_vm_name }}"
+        disk:
+          - state: absent
+            destroy: false
+            scsi_controller: 0
+            unit_number: 0
+      when: not recovery_mode | bool
+
+    - name: Confirm all disks detached from old VM
+      debug:
+        msg: "All disks detached from old VM {{ old_vm_name }}"
+      when: not recovery_mode | bool
+
+    # Attach old root disk to new VM (needed temporarily for migration)
+    - name: Attach old root disk to new VM
+      community.vmware.vmware_guest_disk:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ vcenter_datacenter }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        name: "{{ new_vm_name }}"
+        disk:
+          - filename: "{{ old_root_vmdk }}"
+            state: present
+            scsi_controller: 0
+            unit_number: 1
+      when: not recovery_mode | bool
+
+    # Attach cache disks to new VM starting at unit 2
+    - name: Attach cache disks to new VM
+      community.vmware.vmware_guest_disk:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ vcenter_datacenter }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        name: "{{ new_vm_name }}"
+        disk:
+          - filename: "{{ item }}"
+            state: present
+            scsi_controller: 0
+            unit_number: "{{ ansible_loop.index + 1 }}"
+      loop: "{{ old_cache_vmdks }}"
+      loop_control:
+        extended: true
+      when: not recovery_mode | bool
+
+    - name: Display disk attachment results
+      debug:
+        msg:
+          - "=========================================="
+          - "Disk Attachment Complete"
+          - "=========================================="
+          - "New VM disk layout:"
+          - "  SCSI 0:0 - New OS disk (from OVA)"
+          - "  SCSI 0:1 - Old root disk (temporary, for migration)"
+
+    - name: Display cache disk attachment
+      debug:
+        msg: "  SCSI 0:{{ ansible_loop.index + 1 }} - Cache disk: {{ item }}"
+      loop: "{{ old_cache_vmdks }}"
+      loop_control:
+        extended: true
+
+    - name: Wait 30 seconds for disks to be recognized
+      pause:
+        seconds: 30
+
+    ############################################################################
+    # Step 8: Trigger Migration via URL
+    ############################################################################
+
+    - name: Display migration URL
+      debug:
+        msg:
+          - "Initiating migration with:"
+          - "  Gateway ID: {{ gateway_id }}"
+          - "  Gateway IP: {{ new_gateway_ip }}"
+          - "  URL: http://{{ new_gateway_ip }}/migrate?gatewayId={{ gateway_id }}"
+
+    - name: Initiate gateway migration
+      uri:
+        url: "http://{{ new_gateway_ip }}/migrate?gatewayId={{ gateway_id }}"
+        method: GET
+        return_content: true
+        timeout: "{{ migration_timeout }}"
+      register: migration_result
+      retries: 3
+      delay: 30
+      until: migration_result is succeeded
+
+    - name: Display migration response
+      debug:
+        msg:
+          - "Migration Response: {{ migration_result.content }}"
+          - "Status Code: {{ migration_result.status }}"
+
+    - name: Verify migration success
+      assert:
+        that:
+          - migration_result.status == 200
+          - "'Successfully migrated' in migration_result.content or 'success' in migration_result.content | lower"
+        fail_msg: |
+          Migration may have failed. Response: {{ migration_result.content }}
+          Check the AWS Storage Gateway console for gateway status.
+        success_msg: "Gateway migration completed successfully!"
+
+    ############################################################################
+    # Step 9: Wait for Gateway to Show Running in AWS Console
+    ############################################################################
+
+    - name: Wait for gateway to become active in AWS
+      command: >
+        aws storagegateway describe-gateway-information
+        --gateway-arn "{{ gateway_arn }}"
+        --region "{{ aws_region }}"
+        --query "GatewayState"
+        --output text
+      register: gateway_state
+      until: gateway_state.stdout == "RUNNING"
+      retries: 30
+      delay: 20
+      changed_when: false
+
+    - name: Confirm gateway is running
+      debug:
+        msg: "Gateway {{ gateway_id }} is now RUNNING in AWS"
+
+    ############################################################################
+    # Step 10: Power Off New VM, Detach Old Root Disk, Power On
+    ############################################################################
+
+    - name: Power off new gateway VM for old root disk removal
+      community.vmware.vmware_guest_powerstate:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        name: "{{ new_vm_name }}"
+        state: powered-off
+
+    - name: Wait for new VM to power off
+      community.vmware.vmware_guest_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ vcenter_datacenter }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        name: "{{ new_vm_name }}"
+      register: new_vm_power_check
+      until: new_vm_power_check.instance.hw_power_status == 'poweredOff'
+      retries: 30
+      delay: 10
+
+    - name: Detach old root disk from new VM (SCSI 0:1)
+      community.vmware.vmware_guest_disk:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ vcenter_datacenter }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        name: "{{ new_vm_name }}"
+        disk:
+          - state: absent
+            destroy: false
+            scsi_controller: 0
+            unit_number: 1
+
+    - name: Confirm old root disk detached
+      debug:
+        msg: "Old root disk detached from new VM. The VMDK file is preserved for rollback if needed."
+
+    - name: Power on new gateway VM
+      community.vmware.vmware_guest_powerstate:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        name: "{{ new_vm_name }}"
+        state: powered-on
+
+    - name: Wait for new VM to be fully running
+      community.vmware.vmware_guest_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ vcenter_datacenter }}"
+        validate_certs: "{{ vcenter_validate_certs }}"
+        name: "{{ new_vm_name }}"
+      register: new_vm_final_info
+      until: new_vm_final_info.instance.hw_power_status == 'poweredOn'
+      retries: 30
+      delay: 10
+
+    ############################################################################
+    # Step 11: Wait for Gateway to Reconnect After Restart
+    ############################################################################
+
+    - name: Wait for gateway to reconnect after restart
+      command: >
+        aws storagegateway describe-gateway-information
+        --gateway-arn "{{ gateway_arn }}"
+        --region "{{ aws_region }}"
+        --query "GatewayState"
+        --output text
+      register: gateway_state_final
+      until: gateway_state_final.stdout == "RUNNING"
+      retries: 30
+      delay: 20
+      changed_when: false
+
+    ############################################################################
+    # Step 12: Check SMB/AD Status
+    ############################################################################
+
+    - name: Get SMB settings
+      command: >
+        aws storagegateway describe-smb-settings
+        --gateway-arn "{{ gateway_arn }}"
+        --region "{{ aws_region }}"
+        --output json
+      register: smb_settings_raw
+      changed_when: false
+      failed_when: false
+
+    - name: Parse SMB settings
+      set_fact:
+        smb_settings: "{{ smb_settings_raw.stdout | from_json }}"
+      when: smb_settings_raw.rc == 0
+
+    - name: Display SMB/AD status
+      debug:
+        msg:
+          - "=========================================="
+          - "SMB/Active Directory Status"
+          - "=========================================="
+          - "Domain Name: {{ smb_settings.DomainName | default('N/A') }}"
+          - "AD Status: {{ smb_settings.ActiveDirectoryStatus | default('N/A') }}"
+          - ""
+          - "NOTE: If the gateway was previously joined to AD, you must re-join"
+          - "even if the status shows 'Joined'. Use the AWS Console or CLI:"
+          - "  aws storagegateway join-domain --gateway-arn {{ gateway_arn }}"
+          - "=========================================="
+      when: smb_settings_raw.rc == 0
+
+    ############################################################################
+    # Step 13: Final Summary
+    ############################################################################
+
+    - name: Display migration summary
+      debug:
+        msg:
+          - "=========================================="
+          - "MIGRATION COMPLETE"
+          - "=========================================="
+          - "Gateway ID: {{ gateway_id }}"
+          - "Gateway State: {{ gateway_state_final.stdout }}"
+          - "New VM: {{ new_vm_name }}"
+          - "New VM Power: {{ new_vm_final_info.instance.hw_power_status }}"
+          - ""
+          - "POST-MIGRATION STEPS:"
+          - "  1. Verify gateway status in AWS Console"
+          - "  2. Test file share access from clients"
+          - "  3. If AD-joined, re-join the domain"
+          - "  4. If using SMB Guest Access, re-enter the password"
+          - "  5. Once verified, delete the old VM: {{ old_vm_name }}"
+          - "  6. Delete the old root VMDK: {{ old_root_vmdk }}"
+          - "=========================================="

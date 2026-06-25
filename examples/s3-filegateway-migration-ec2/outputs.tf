@@ -3,7 +3,8 @@
 ################################################################################
 
 output "migration_summary" {
-  description = "Summary of the migration process"
+  description = "Summary of the migration process. Marked sensitive because it includes fields derived from data.aws_instance.old_sgw.root_block_device, which the AWS provider treats as sensitive. Use `terraform output -json migration_summary` to view."
+  sensitive   = true
   value = {
     gateway_id         = var.gateway_id
     old_instance_id    = data.aws_instance.old_sgw.id

@@ -1,0 +1,7 @@
+terraform.tfvars
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+ansible/logs/
+migration-volumes-*.txt

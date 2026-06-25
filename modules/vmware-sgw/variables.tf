@@ -30,12 +30,6 @@ variable "datacenter" {
   description = "Name of the vsphere datacenter where the aws storage gateway will be deployed"
 }
 
-variable "os_size" {
-  type        = string
-  description = "Size of the OS disk of the VM. Specified in gigabytes, default is the current VM default. Likely doesn't need to be modified"
-  default     = "80"
-}
-
 variable "network" {
   type        = string
   description = "Name of the vsphere port group that the aws storage gateway will use"
@@ -50,7 +44,13 @@ variable "name" {
 variable "cache_size" {
   default     = "150"
   type        = string
-  description = "Total size of the cache disk that will be added to the storage gateway. Specified in gigabytes. Default is set to 150 but can be increased to 64000"
+  description = "Size of the cache disk created by the OVA, in gigabytes. Only used when deployment_option = \"new-gateway\". Default is 150, can be increased up to 64000."
+}
+
+variable "os_size" {
+  default     = "80"
+  type        = string
+  description = "Size of the OS disk in gigabytes. Default 80 (matches the v2 OVA's OS disk). Used by both \"new-gateway\" and \"migrate\" deployment options. For \"migrate\", set to the source gateway's OS disk size to match capacity."
 }
 
 variable "remote_ovf_url" {
@@ -66,7 +66,21 @@ variable "local_ovf_path" {
 }
 
 variable "provisioning_type" {
-  default     = "thick"
+  default     = "thin"
   type        = string
-  description = "Disk provisioning type for the vm and all attached disks"
+  description = "Disk provisioning type for the OVF import. The v2 Storage Gateway OVA uses streamOptimized VMDKs, which can only land as \"thin\" during import. Disks may be inflated post-deploy if eager-zeroed thick is required."
+  validation {
+    condition     = var.provisioning_type == "thin"
+    error_message = "The v2 Storage Gateway OVA only imports as \"thin\". Convert to thick post-deploy if needed."
+  }
+}
+
+variable "deployment_option" {
+  default     = "new-gateway"
+  type        = string
+  description = "OVF deployment option. \"new-gateway\" creates a fresh gateway with OS + cache disks (cache disk sized via cache_size). \"migrate\" creates only the OS disk - used as the replacement VM during a method-1 migration where cache disks are attached from the source VM."
+  validation {
+    condition     = contains(["new-gateway", "migrate"], var.deployment_option)
+    error_message = "deployment_option must be either \"new-gateway\" or \"migrate\"."
+  }
 }

@@ -1,0 +1,23 @@
+# Required - Gateway ID to migrate
+gateway_id = "sgw-12A3456B"
+
+# Required - vSphere connection
+vsphere_server   = "vcenter.example.com"
+vsphere_user     = "administrator@vsphere.local"
+vsphere_password = "your-password"
+
+# Required - vSphere infrastructure
+datacenter = "DC1"
+datastore  = "datastore1"
+cluster    = "Cluster1"
+host       = "esxi-host1.example.com"
+network    = "VM Network"
+
+# Required - Name of the existing gateway VM in vSphere
+old_vm_name = "aws-storage-gateway"
+
+# Optional - Override new VM settings
+# new_vm_name       = "aws-storage-gateway-new"
+# cpus              = "8"
+# memory            = "32768"
+# gateway_type      = "FILE_S3"

@@ -1,0 +1,9 @@
+---
+# Bounded version ranges so a future breaking release does not silently
+# break the migration playbook. Bump the upper bound after explicitly
+# testing against a newer major.
+collections:
+  - name: amazon.aws
+    version: ">=7.0.0,<10.0.0"
+  - name: community.vmware
+    version: ">=4.0.0,<6.0.0"
